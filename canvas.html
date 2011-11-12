@@ -1,0 +1,59 @@
+<!DOCTYPE HTML>
+
+<html>
+<head>
+    <title>Canvas</title>
+</head>
+
+<body>
+<canvas id="myCanvas" width="600" height="600"></canvas>
+    
+<script type="text/javascript">
+
+    window.onload = function(){
+
+    var canvas = document.getElementById("myCanvas");
+
+    var context = canvas.getContext("2d");
+
+    var width = 200;
+    var height = 100;
+
+    var x = 100;
+    var y = 100;
+
+       function rectangle(x, y) {
+           context.beginPath();
+           context.rect(x, y, width, height);
+           context.fillStyle = "#8ED6FF";
+           context.fill();
+       }
+       
+       function clear(x, y) {
+               context.clearRect(x, y, width, height);
+       }
+
+       function move(speed) {
+       
+               
+       
+               clear(x, y);
+               x += 10;
+               rectangle(x, y);
+               speed -= 100;
+               setTimeout(function() {
+                       move(speed);
+               }, speed);
+        }
+        
+        move(1000);
+
+
+    //circle(400, 400, 10);
+    //circle(100, 100, 10);
+
+    };
+
+</script>
+</body>
+</html>
