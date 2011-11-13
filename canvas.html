@@ -1,58 +1,31 @@
 <!DOCTYPE HTML>
-
 <html>
 <head>
-    <title>Canvas</title>
+<title>Torus 0.1</title>
+<script type="text/javascript" src="js/Toroid.js"></script>
+<style type="text/css">
+	canvas {
+		border: solid 1px #ccc;
+	}
+</style>
 </head>
 
 <body>
-<canvas id="myCanvas" width="600" height="600"></canvas>
-    
+<canvas id="torusScreen" width="500" height="600"></canvas>
 <script type="text/javascript">
 
-    window.onload = function(){
+// global vars
+var canvas = document.getElementById("torusScreen");
+var context = canvas.getContext("2d");
 
-    var canvas = document.getElementById("myCanvas");
+// onload
+window.onload = function() {
 
-    var context = canvas.getContext("2d");
-
-    var width = 200;
-    var height = 100;
-
-    var x = 100;
-    var y = 100;
-
-       function rectangle(x, y) {
-           context.beginPath();
-           context.rect(x, y, width, height);
-           context.fillStyle = "#8ED6FF";
-           context.fill();
-       }
-       
-       function clear(x, y) {
-               context.clearRect(x, y, width, height);
-       }
-
-       function move(speed) {
-       
-               
-       
-               clear(x, y);
-               x += 10;
-               rectangle(x, y);
-               speed -= 100;
-               setTimeout(function() {
-                       move(speed);
-               }, speed);
-        }
-        
-        move(1000);
-
-
-    //circle(400, 400, 10);
-    //circle(100, 100, 10);
-
-    };
+	// right now these are really just blocks
+    var activeToroid = new Toroid(20, 20, 20);
+    var otherToroid = new Toroid(120, 20, 20);
+    
+};
 
 </script>
 </body>
