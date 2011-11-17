@@ -2,14 +2,57 @@
  * Toroid Object
  *
  */
-var Toroid = function(x, y, speed) {
+var Toroid = function(blocks, speed) {
 
-    this.x = x;
-    this.y = y;
-    this.speed = speed;
-    
-    this.fall();
-    
+	this.toroidBlocks = blocks;
+	this.toroidSpeed = speed;
+
+	this.fall();
+	
+}
+
+// ------------------------------------------------------------------------
+
+Toroid.prototype.drawBlocks = function() {
+
+	var blocks = this.toroidBlocks;
+	var numBlocks = blocks.length;
+	
+	for (var i = 0; i < numBlocks; i++) {
+	
+		var shape = {};
+		shape.x = blocks[i].x
+		shape.y = blocks[i].y
+		shape.x *= 50;
+		shape.y *= 50;
+		context.beginPath();
+		context.rect(shape.x, shape.y, 50, 50);
+		context.fillStyle = "#8ED6FF";
+		context.fill();
+
+	}
+	
+	console.log(this.toroidBlocks);
+	
+
+}
+
+// ------------------------------------------------------------------------
+
+Toroid.prototype.clearBlocks = function() {
+
+	var blocks = this.toroidBlocks;
+	var numBlocks = blocks.length;
+	
+	for (var i = 0; i < numBlocks; i++) {
+		var shape = {};
+		shape.x = blocks[i].x
+		shape.y = blocks[i].y
+		shape.x *= 50;
+		shape.y *= 50;
+		context.clearRect(shape.x, shape.y, 50, 50);
+	}
+
 }
 
 // ------------------------------------------------------------------------
@@ -17,35 +60,19 @@ var Toroid = function(x, y, speed) {
 Toroid.prototype.fall = function() {
 
 	// clear any existing
-	context.clearRect(this.x, this.y, 50, 50);	
+	this.clearBlocks();
 
-	// adjust & draw
- 	this.y += 1;
-	this.draw(); // should take an object???
+	var numBlocks = this.toroidBlocks.length;
+	
+	for (var i = 0; i < numBlocks; i++) {
+		this.toroidBlocks[i].y += 1;
+	}
+	
+	this.drawBlocks();
 
-	// repeat
-	var self = this;
+	var self = this; //proxy
 	setTimeout(function() {
 		self.fall();
-	}, this.speed);
+	}, self.toroidSpeed);
 	
-}
-
-// ------------------------------------------------------------------------
-
-Toroid.prototype.draw = function() {
-	
-	context.beginPath();
-	context.rect(this.x, this.y, 50, 50);
-	context.fillStyle = "#8ED6FF";
-	context.fill();
-
-	console.log(this.getData());
-
-}
-
-// ------------------------------------------------------------------------
-
-Toroid.prototype.getData = function(){
-    return { x: this.x, y: this.y, speed: this.speed };
 }

@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<title>Torus 0.1</title>
+<title>Torus 0.1.1</title>
 <script type="text/javascript" src="js/Toroid.js"></script>
 <style type="text/css">
 	canvas {
@@ -12,6 +12,15 @@
 
 <body>
 <canvas id="torusScreen" width="500" height="600"></canvas>
+<!-- 
+grid
+0,0|1,0|2,0
+1,0|1,1|2,1
+
+
+-->
+
+
 <script type="text/javascript">
 
 // global vars
@@ -21,9 +30,7 @@ var context = canvas.getContext("2d");
 // onload
 window.onload = function() {
 
-	// right now these are really just blocks
-    var activeToroid = new Toroid(20, 20, 20);
-    var otherToroid = new Toroid(120, 20, 20);
+    var realToroid = new Toroid([{x:0, y:-1}, {x:1, y:-1}], 1000);
     
 };
 
