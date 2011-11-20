@@ -2,6 +2,7 @@
 <html>
 <head>
 <title>Torus 0.1.1</title>
+<script type="text/javascript" src="js/Blockus.js"></script>
 <script type="text/javascript" src="js/Toroid.js"></script>
 <style type="text/css">
 	canvas {
@@ -27,10 +28,17 @@ grid
 var canvas = document.getElementById("torusScreen");
 var context = canvas.getContext("2d");
 
+var blockus = [];
+
 // onload
 window.onload = function() {
 
-    var realToroid = new Toroid([{x:0, y:-1}, {x:1, y:-1}], 1000);
+    blockus = new Blockus();
+    
+    toroid1 = new Toroid('j', 1000);
+    toroid2 = new Toroid('i', 1000);
+    
+    //go = blockus.checkPath(toroid.blocks);
     
 };
 
