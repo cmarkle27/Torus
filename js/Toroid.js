@@ -2,16 +2,21 @@
  * Toroid Object
  *
  */
-var Toroid = function(type, speed) {
+var Toroid = function() {
 
-	this.j = [{x:0, y:-1}, {x:1, y:-1}, {x:1, y:-2}, {x:1, y:-3}];
+	var types = ['i', 'j', 'x', 'x'];
+	var type = types[Math.floor(Math.random() * types.length)];
+
+	this.j = [{x:1, y:-1}, {x:2, y:-1}, {x:2, y:-2}, {x:2, y:-3}];
 	this.i = [{x:0, y:0}, {x:0, y:-1}, {x:0, y:-2}, {x:0, y:-3}];
+	this.x = [{x:0, y:-1}, {x:1, y:-1}, {x:1, y:-2}, {x:1, y:-3}];
+
+	this.blocks = this[type];
 
 	this.WIDTH = 40; 
 
-	this.blocks = this[type];
 	this.numBlocks = this.blocks.length;
-	this.speed = speed;
+	this.speed = 500;
 	
 	
 }
@@ -28,7 +33,7 @@ Toroid.prototype.draw = function() {
 		shape.x *= this.WIDTH;
 		shape.y *= this.WIDTH;
 		context.beginPath();
-		context.rect(shape.x, shape.y+(this.WIDTH*4), this.WIDTH, this.WIDTH);
+		context.rect(shape.x, shape.y, this.WIDTH, this.WIDTH);
 		context.fillStyle = "#8ED6FF";
 		context.fill();
 
@@ -46,7 +51,7 @@ Toroid.prototype.clear = function() {
 		shape.y = this.blocks[i].y
 		shape.x *= this.WIDTH;
 		shape.y *= this.WIDTH;
-		context.clearRect(shape.x, shape.y+(this.WIDTH*4), this.WIDTH, this.WIDTH);
+		context.clearRect(shape.x, shape.y, this.WIDTH, this.WIDTH);
 	}
 
 }
@@ -63,27 +68,11 @@ Toroid.prototype.fall = function() {
 	}
 	
 	this.draw();
-
-	var self = this; //proxy
-	setTimeout(function() {
-		self.fall();
-	}, self.speed);
 	
 }
 
 // ------------------------------------------------------------------------
 
-/*
-function addToSet(set, values) {
-	for (var i = 0; i < values.length; i++) {
-		set[values[i]] = true;
-	}
-}
-function removeFromSet(set, values) {
-	for (var i = 0; i < values.length; i++) {
-		delete set[values[i]];
-	}
-}
-*/
+//move the toriod...
 
-
+//rotate the toroid...

@@ -28,17 +28,27 @@ grid
 var canvas = document.getElementById("torusScreen");
 var context = canvas.getContext("2d");
 
-var blockus = [];
+var blockus = new Blockus();
+var toroid = new Toroid();
+
+function gameLoop() {
+	setTimeout(function() {
+		if (blockus.checkPath(toroid.blocks)) {
+			toroid.fall();
+			gameLoop();
+		} else {
+			// add it to blockus
+			blockus.add(toroid.blocks);
+		}
+	}, toroid.speed);
+}
+
+// ------------------------------------------------------------------------
 
 // onload
 window.onload = function() {
-
-    blockus = new Blockus();
     
-    toroid1 = new Toroid('j', 1000);
-    toroid2 = new Toroid('i', 1000);
-    
-    //go = blockus.checkPath(toroid.blocks);
+	gameLoop();
     
 };
 
