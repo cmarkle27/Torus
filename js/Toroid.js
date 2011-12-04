@@ -22,6 +22,7 @@ var Toroid = function() {
 	this.numBlocks = this.blocks.length;
 	this.speed = 500;
 	this.modX = 0;
+	this.modSpeed = 0;
 	
 	
 }
