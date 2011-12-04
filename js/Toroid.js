@@ -4,12 +4,16 @@
  */
 var Toroid = function() {
 
-	var types = ['i', 'j', 'x', 'x'];
+	var types = ['i', 'j', 'o', 'l', 's', 'z', 't'];
 	var type = types[Math.floor(Math.random() * types.length)];
 
-	this.j = [{x:1, y:-1}, {x:2, y:-1}, {x:2, y:-2}, {x:2, y:-3}];
-	this.i = [{x:0, y:0}, {x:0, y:-1}, {x:0, y:-2}, {x:0, y:-3}];
-	this.x = [{x:0, y:-1}, {x:1, y:-1}, {x:1, y:-2}, {x:1, y:-3}];
+	this.j = [{x:0, y:-1}, {x:1, y:-1}, {x:1, y:-2}, {x:1, y:-3}];
+	this.i = [{x:1, y:0}, {x:1, y:-1}, {x:1, y:-2}, {x:1, y:-3}];
+	this.o = [{x:1, y:-1}, {x:1, y:-2}, {x:2, y:-2}, {x:2, y:-1}];
+	this.l = [{x:2, y:-1}, {x:1, y:-1}, {x:1, y:-2}, {x:1, y:-3}];
+	this.s = [{x:1, y:-1}, {x:2, y:-1}, {x:2, y:-2}, {x:3, y:-2}];
+	this.z = [{x:3, y:-1}, {x:2, y:-1}, {x:2, y:-2}, {x:1, y:-2}];
+	this.t = [{x:1, y:-1}, {x:2, y:-1}, {x:3, y:-1}, {x:2, y:-2}];
 
 	this.blocks = this[type];
 

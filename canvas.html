@@ -30,6 +30,8 @@ function gameLoop() {
 		} else {
 			// add it to blockus
 			blockus.add(toroid.blocks);
+			toroid = new Toroid();
+			gameLoop();
 		}
 	}, toroid.speed);
 }
