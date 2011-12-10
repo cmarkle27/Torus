@@ -26,9 +26,6 @@ var Toroid = function() {
 
 	this.numBlocks = this.blocks.length;
 	this.speed = 500;
-	this.xMod = 0;
-	this.yMod = 0;
-	this.speedMod = 0;
 	
 }
 
@@ -40,9 +37,6 @@ Toroid.prototype.draw = function() {
 
 	for (var i = 0; i < this.numBlocks; i++) {
 
-		this.blocks[i].x += this.xMod;
-		this.blocks[i].y += this.yMod;
-		
 	    shape = {};
 		shape.x = this.blocks[i].x;
 		shape.y = this.blocks[i].y;
@@ -52,10 +46,6 @@ Toroid.prototype.draw = function() {
 	    context.drawImage(this.tile, shape.x, shape.y, this.width, this.width);
 
 	}
-	
-	this.xMod = 0;
-	this.yMod = 0;
-	this.speedMod = 0;
 	
 }
 
@@ -135,5 +125,24 @@ Toroid.prototype.fall = function() {
 }
 
 // ------------------------------------------------------------------------
+
+Toroid.prototype.push = function(amount) {
+
+	this.speed = 500 + 500 * amount;
+	
+	console.log(this.speed);
+	
+}
+
+// ------------------------------------------------------------------------
+
+Toroid.prototype.reset = function() {
+
+	this.speed = 500;
+	
+}
+
+// ------------------------------------------------------------------------
+
 
 //rotate the toroid...

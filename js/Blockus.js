@@ -61,8 +61,6 @@ Blockus.prototype.overflow = function() {
 
 	for (var i = 0; i < matrixLength; i++) {
 
-		console.log(this.matrix[i].y);
-
 		if (this.matrix[i].y < 0) {
 			return true;
 		}
