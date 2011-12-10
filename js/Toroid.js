@@ -15,37 +15,47 @@ var Toroid = function() {
 	this.z = [{x:3, y:-1}, {x:2, y:-1}, {x:2, y:-2}, {x:1, y:-2}];
 	this.t = [{x:1, y:-1}, {x:2, y:-1}, {x:3, y:-1}, {x:2, y:-2}];
 
+	this.tile = new Image();
+	// this should be random too
+	this.tile.src = 'img/tile.jpg';
+	// we should also randomize where they start <-x->
+
 	this.blocks = this[type];
 
-	this.WIDTH = 40; 
+	this.width = 40; 
 
 	this.numBlocks = this.blocks.length;
 	this.speed = 500;
-	this.modX = 0;
-	this.modSpeed = 0;
-	
+	this.xMod = 0;
+	this.yMod = 0;
+	this.speedMod = 0;
 	
 }
 
 // ------------------------------------------------------------------------
 
 Toroid.prototype.draw = function() {
-	
+
+	var shape;
+
 	for (var i = 0; i < this.numBlocks; i++) {
-	
-		var shape = {};
-		this.blocks[i].x += this.modX;
+
+		this.blocks[i].x += this.xMod;
+		this.blocks[i].y += this.yMod;
+		
+	    shape = {};
 		shape.x = this.blocks[i].x;
 		shape.y = this.blocks[i].y;
-		shape.x *= this.WIDTH;
-		shape.y *= this.WIDTH;
-		context.beginPath();
-		context.rect(shape.x, shape.y, this.WIDTH, this.WIDTH);
-		context.fillStyle = "#8ED6FF";
-		context.fill();
+		shape.x *= this.width;
+		shape.y *= this.width;
+		
+	    context.drawImage(this.tile, shape.x, shape.y, this.width, this.width);
 
 	}
-	this.modX = 0;
+	
+	this.xMod = 0;
+	this.yMod = 0;
+	this.speedMod = 0;
 	
 }
 
@@ -53,39 +63,77 @@ Toroid.prototype.draw = function() {
 
 Toroid.prototype.clear = function() {
 
+	var shape;
+
 	for (var i = 0; i < this.numBlocks; i++) {
-		var shape = {};
-		shape.x = this.blocks[i].x
-		shape.y = this.blocks[i].y
-		shape.x *= this.WIDTH;
-		shape.y *= this.WIDTH;
-		context.clearRect(shape.x, shape.y, this.WIDTH, this.WIDTH);
+
+	    shape = {};
+		shape.x = this.blocks[i].x;
+		shape.y = this.blocks[i].y;
+		shape.x *= this.width;
+		shape.y *= this.width;
+		
+		context.clearRect(shape.x, shape.y, this.width, this.width);
+
 	}
 
+}
+
+// ------------------------------------------------------------------------
+
+/**
+ * this method allows the shapes to go left and right
+ *
+ */
+Toroid.prototype.move = function(matrix, amount) {
+
+	var noBlocks = true;	
+	var noWalls = true;
+	var xNext, yNext;
+	
+	var matrixLength = matrix.length;
+	
+	for (var i = 0; i < this.numBlocks; i++) {
+
+		xNext = this.blocks[i].x + amount;
+		yNext = this.blocks[i].y;
+
+		// walls
+		if (xNext === 12 || xNext === -1) {
+			noWalls = false;
+		}
+
+		// blocks
+		for (var j = 0; j < matrixLength; j++) {
+			if (matrix[j].y === yNext && matrix[j].x === xNext) {
+				noBlocks = false;
+			}
+		}
+
+	}
+	
+	if (noWalls && noBlocks) {
+		this.clear();
+		for (var i = 0; i < this.numBlocks; i++) {
+			this.blocks[i].x += amount;
+		}	
+		this.draw();
+	}
+	
 }
 
 // ------------------------------------------------------------------------
 
 Toroid.prototype.fall = function() {
 
-	// clear any existing
 	this.clear();
-	
 	for (var i = 0; i < this.numBlocks; i++) {
 		this.blocks[i].y += 1;
 	}
-	
 	this.draw();
 	
 }
 
 // ------------------------------------------------------------------------
-
-//move the toriod...
-Toroid.prototype.move = function(x) {
-	for (var i = 0; i < this.numBlocks; i++) {
-		this.modX = x;
-	}
-}
 
 //rotate the toroid...

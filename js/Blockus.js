@@ -10,50 +10,39 @@ var Blockus = function() {
 
 // ------------------------------------------------------------------------
 
-Blockus.prototype.checkPath = function(blocks, direction) {
+Blockus.prototype.hitCheck = function(blocks) {
 
 	var numBlocks = blocks.length;
 	var matrixLength = this.matrix.length;
+	var xNext, yNext;
 	
-	var nextX, nextY;
-	
-	//temp
-	var direction = 'default';
-
 	// check if any of our blocks have hit bottom or existing blocks
 	for (var i = 0; i < numBlocks; i++) {
 
-		switch (direction) {
-		case 'a': 
-			//code 
-			break;  
-		case 'b':
-			//code
-			break;
-		default:
-			nextX = blocks[i].x;
-			nextY = blocks[i].y + 1;
-		}
+		yNext = blocks[i].y + 1;
+		xNext = blocks[i].x;
 	
-		if (nextY === 15) {
+		// bottom
+		if (yNext === 15) {
 			return false;
-		} else {
-			for (var j = 0; j < matrixLength; j++) {
-				if (this.matrix[j].y === nextY && this.matrix[j].x === nextX) {
-					return false;
-				}
+		} 
+		
+		// existing blocks
+		for (var j = 0; j < matrixLength; j++) {
+			if (this.matrix[j].y === yNext && this.matrix[j].x === xNext) {
+				return false;
 			}
 		}
 		
 	}
-	return true;
 	
+	return true;
 
 }
 
 // ------------------------------------------------------------------------
 
-Blockus.prototype.add = function(blocks) {
+Blockus.prototype.addBlocks = function(blocks) {
 
 	var numBlocks = blocks.length;
 	
@@ -62,6 +51,26 @@ Blockus.prototype.add = function(blocks) {
 		this.matrix.push(blocks[i]);
 	}
 	
-	console.log(this.matrix);
+}
+
+// ------------------------------------------------------------------------
+
+Blockus.prototype.overflow = function() {
+	
+	var matrixLength = this.matrix.length;
+
+	for (var i = 0; i < matrixLength; i++) {
+
+		console.log(this.matrix[i].y);
+
+		if (this.matrix[i].y < 0) {
+			return true;
+		}
+	}
 	
 }
+
+// ------------------------------------------------------------------------
+
+// remove blocks!!!
+

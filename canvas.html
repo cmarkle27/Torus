@@ -1,51 +1,17 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<title>Torus 0.2.0</title>
-<script type="text/javascript" src="js/Blockus.js"></script>
-<script type="text/javascript" src="js/Toroid.js"></script>
-<script type="text/javascript" src="js/InputHandler.js"></script>
+<title>Torus 0.2.3</title>
 <style type="text/css">
-	canvas {
-		border: solid 1px #ccc;
-	}
+	canvas { border: solid 1px #ccc; }
 </style>
 </head>
 
-<body onkeydown="InputHandler(event)">
-<canvas id="torusScreen" width="500" height="600"></canvas>
-<script type="text/javascript">
-
-// global vars
-var canvas = document.getElementById("torusScreen");
-var context = canvas.getContext("2d");
-
-var blockus = new Blockus();
-var toroid = new Toroid();
-
-function gameLoop() {
-	setTimeout(function() {
-		if (blockus.checkPath(toroid.blocks)) {
-			toroid.fall();
-			gameLoop();
-		} else {
-			// add it to blockus
-			blockus.add(toroid.blocks);
-			toroid = new Toroid();
-			gameLoop();
-		}
-	}, toroid.speed + toroid.modSpeed);
-}
-
-// ------------------------------------------------------------------------
-
-// onload
-window.onload = function() {
-    
-	gameLoop();
-    
-};
-
-</script>
+<body>
+<canvas id="torusScreen" width="480" height="600"></canvas>
+<script src="js/jquery-1.7.min.js"></script>
+<script src="js/Blockus.js"></script>
+<script src="js/Toroid.js"></script>
+<script src="js/execute.js"></script>
 </body>
 </html>
