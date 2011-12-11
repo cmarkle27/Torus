@@ -28,5 +28,13 @@ $("body").keydown(function(e) {
 });
 
 $(document).ready(function() {
-	gameLoop();
+	
+	$('#begin').on('click', function() {
+		$(this).html('Restart Game');
+		window.toroid = new Toroid();
+		window.blockus = new Blockus();
+		gameLoop();
+
+	});
+	
 });

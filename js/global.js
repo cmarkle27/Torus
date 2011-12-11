@@ -2,8 +2,6 @@
 // !should we just make a game object to contain all these???
 var canvas = document.getElementById("torusScreen");
 var context = canvas.getContext("2d");
-var blockus = new Blockus();
-var toroid = new Toroid();
 
 var gameLoop = function() {
 
@@ -11,7 +9,7 @@ var gameLoop = function() {
 		toroid.fall();			
 	} else {
 		blockus.addBlocks(toroid.blocks);
-		toroid = new Toroid();
+		window.toroid = new Toroid();
 	}
 	
 	if (blockus.overflow()) {

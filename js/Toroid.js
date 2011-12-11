@@ -5,7 +5,10 @@
 var Toroid = function() {
 
 	var types = ['i', 'j', 'o', 'l', 's', 'z', 't'];
+	var colors = ['#cc0000', '#8ED6FF', '#ffff33', '#33cc00'];
 	var type = types[Math.floor(Math.random() * types.length)];
+	
+	this.color = colors[Math.floor(Math.random() * colors.length)];
 
 	this.j = [{x:0, y:-1}, {x:1, y:-1}, {x:1, y:-2}, {x:1, y:-3}];
 	this.i = [{x:1, y:0}, {x:1, y:-1}, {x:1, y:-2}, {x:1, y:-3}];
@@ -17,7 +20,7 @@ var Toroid = function() {
 
 	this.tile = new Image();
 	// this should be random too
-	this.tile.src = 'img/tile.jpg';
+	this.tile.src = 'img/tile4.png';
 	// we should also randomize where they start <-x->
 
 	this.blocks = this[type];
@@ -42,6 +45,11 @@ Toroid.prototype.draw = function() {
 		shape.y = this.blocks[i].y;
 		shape.x *= this.width;
 		shape.y *= this.width;
+
+        context.beginPath();
+        context.rect(shape.x, shape.y, this.width, this.width);
+        context.fillStyle = this.color;
+        context.fill();
 		
 	    context.drawImage(this.tile, shape.x, shape.y, this.width, this.width);
 
