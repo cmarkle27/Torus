@@ -5,7 +5,7 @@
 var Toroid = function() {
 
 	var types = ['i', 'j', 'o', 'l', 's', 'z', 't'];
-	var colors = ['#cc0000', '#8ED6FF', '#ffff33', '#33cc00'];
+	var colors = ['#cc0000', '#3399ff', '#ffff33', '#33cc00', '#666666', '#3333ff', '#339900', '#bbbbbb'];
 	var type = types[Math.floor(Math.random() * types.length)];
 	
 	this.color = colors[Math.floor(Math.random() * colors.length)];
@@ -137,8 +137,6 @@ Toroid.prototype.fall = function() {
 Toroid.prototype.push = function(amount) {
 
 	this.speed = 500 + 500 * amount;
-	
-	console.log(this.speed);
 	
 }
 

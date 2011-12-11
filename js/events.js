@@ -37,4 +37,11 @@ $(document).ready(function() {
 
 	});
 	
+	// modal dialogs
+	$('#modal-from-dom').modal({backdrop: 'static'});
+
+	$('#close').on('click', function(e) {
+		$('#modal-from-dom').modal('hide');
+	});	
+	
 });

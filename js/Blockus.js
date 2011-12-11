@@ -70,5 +70,62 @@ Blockus.prototype.overflow = function() {
 
 // ------------------------------------------------------------------------
 
+Blockus.prototype.torusCheck = function() {
+	
+	var matrixLength = this.matrix.length;
+	
+	// check if there are 12 y's in a row
+	var columns = [];
+	
+	for (var j = 0; j < 15; j++) {
+
+		columns[j] = 0;
+
+		for (var i = 0; i < matrixLength; i++) {
+
+			if (this.matrix[i].y == j) {
+				columns[j]++;
+			}
+		
+		}
+		
+		if (columns[j] > 11) {
+			console.log(columns[j]);
+			this.clearLine(j);
+		}
+	}
+	
+}
+
+// ------------------------------------------------------------------------
+
+Blockus.prototype.clearLine = function(number) {
+
+	var matrixLength = this.matrix.length;
+
+	for (var i = 0; i < matrixLength; i++) {
+
+		if (this.matrix[i].y == number) {
+
+		    shape = {};
+			shape.x = this.matrix[i].x;
+			shape.y = this.matrix[i].y;
+			shape.x *= 40;
+			shape.y *= 40;
+			
+			context.clearRect(shape.x, shape.y, 40, 40);
+			
+			this.matrix[i].delete;
+		}
+		
+		if (this.matrix[i].y > number) {
+			this.matrix[i].y += 1;
+			// now redraw
+		}
+	
+	}	
+
+}
+
 // remove blocks!!!
 

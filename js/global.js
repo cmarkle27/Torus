@@ -9,11 +9,14 @@ var gameLoop = function() {
 		toroid.fall();			
 	} else {
 		blockus.addBlocks(toroid.blocks);
+		
+		blockus.torusCheck();
+		
 		window.toroid = new Toroid();
 	}
 	
 	if (blockus.overflow()) {
-		alert('Deads!');
+		$('#modal-from-dom').modal('show');
 	} else {
 		setTimeout(function() { gameLoop(); }, toroid.speed);
 		toroid.reset();
