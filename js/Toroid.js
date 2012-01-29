@@ -6,8 +6,9 @@ var Toroid = function() {
 
 	var types = ['i', 'j', 'o', 'l', 's', 'z', 't'];
 	var colors = ['#cc0000', '#3399ff', '#ffff33', '#33cc00', '#666666', '#3333ff', '#339900', '#bbbbbb'];
-	var type = types[Math.floor(Math.random() * types.length)];
 	
+	var type = types[Math.floor(Math.random() * types.length)];
+
 	this.color = colors[Math.floor(Math.random() * colors.length)];
 
 	this.j = [{x:0, y:-1}, {x:1, y:-1}, {x:1, y:-2}, {x:1, y:-3}];

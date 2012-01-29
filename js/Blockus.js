@@ -4,7 +4,19 @@
  */
 var Blockus = function() {
 
-	this.matrix = []; // all empty
+	this.matrix = [];
+
+	// new, hmm...
+/*
+	this.matrix2 = [];
+
+
+	for (var i = 0; i < 12; i++) {	
+		this.matrix2[i] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+	}
+	
+	this.toroids = [];
+*/
 	
 }
 
@@ -127,5 +139,30 @@ Blockus.prototype.clearLine = function(number) {
 
 }
 
-// remove blocks!!!
+
+
+// can't readjust blocks!!!
+
+
+// ------------------------------------------------------------------------
+
+/**
+ * NEW
+ *
+ */
+
+Blockus.prototype.addToroid = function(toroid) {
+
+	this.toroids.push(toroid);
+	
+	// should add to matrix2 (multidimentional array) instead
+
+	var numBlocks = blocks.length;
+	
+	for (var i = 0; i < numBlocks; i++) {
+
+		this.matrix.push(blocks[i]);
+	}
+	
+}
 

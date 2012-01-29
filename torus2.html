@@ -1,0 +1,117 @@
+<!DOCTYPE html> 
+<html> 
+<head>
+	<title>Untitled</title>
+</head>
+
+<body>
+
+<script type="text/javascript">
+
+matrix = [];
+for (var i = 0; i < 16; i++) {
+	matrix[i] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+}
+
+blocks = [{x:1, y:0}, {x:1, y:1}, {x:1, y:2}, {x:0, y:2}];
+
+
+// rotate
+/* hexkaidekal rotation
+
+0,0,1,0
+0,0,1,0
+0,1,1,0
+
+0,0,0,0
+1,1,1,0
+0,0,1,0
+
+0,0,1,1
+0,0,1,0
+0,0,1,0
+
+
+-----------------------
+
+
+-0,-0,+3,-0
+-0,-0,+1,-0
+-0,-1,-1,-0
+-0,-0,-0,-0
+
+
+*/
+
+
+
+
+function outputMatrix(matrix) {
+
+	//length = matrix.length;
+	
+	var gameBoard = "";
+	var body = document.getElementsByTagName("body");
+	
+	for (var i = 0; i < 16; i++) {	
+		for (var j = 0; j < 12; j++) {	
+			gameBoard += matrix[i][j];
+		}
+		gameBoard += "<br />";
+	}
+	
+	body[0].innerHTML = gameBoard;
+	
+	
+}
+
+function addBlocks(blocks) {
+
+	var blockX, blockY;
+		
+	for (var i = 0; i < blocks.length; i++) {
+		blockX = blocks[i].x;
+		blockY = blocks[i].y;
+		matrix[blockY][blockX] = 1;
+	}
+
+}
+
+function fallBlocks(blocks) {
+
+	for (var i = 0; i < blocks.length; i++) {
+		blocks[i].y += 1;
+	}
+	
+	return blocks;
+
+}
+function removeBlocks(blocks) {
+
+	var blockX, blockY;
+		
+	for (var i = 0; i < blocks.length; i++) {
+		blockX = blocks[i].x;
+		blockY = blocks[i].y;
+		matrix[blockY][blockX] = 0;
+	}
+
+}
+
+
+function gameLoop() {
+
+	removeBlocks(blocks);
+	blocks = fallBlocks(blocks);
+	addBlocks(blocks);
+	outputMatrix(matrix);
+	
+	setTimeout(function() { gameLoop(); }, 0.5 * 1000);
+	
+}
+
+gameLoop();
+
+</script>
+</body>
+</html>
