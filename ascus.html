@@ -1,0 +1,118 @@
+<!DOCTYPE html> 
+<html> 
+<head>
+	<title>Untitled</title>
+</head>
+
+<body style="font-family:consolas, sans">
+<div id="canvas" style="height:300px;width:160px;background:#ddd;"></div>
+
+<button id="rotateLeft">Rotate Left</button>
+
+
+<script type="text/javascript">
+
+
+matrix = [];
+for (var i = 0; i < 16; i++) {
+	matrix[i] = ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-"];
+}
+
+
+var jUp = [{x:1, y:0}, {x:1, y:1}, {x:1, y:2}, {x:0, y:2}];
+var jLeft = [{x:0, y:0}, {x:0, y:1}, {x:1, y:1}, {x:2, y:1}];
+var jRight = [{x:0, y:0}, {x:0, y:1}, {x:1, y:1}, {x:2, y:1}];
+
+var altitude = 0;
+var longitude = 3;
+
+blocks = jUp;
+
+
+
+
+function drawMatrix(matrix) {
+
+	//length = matrix.length;
+	
+	var gameBoard = "";
+	var canvas = document.getElementById("canvas");
+	
+	for (var i = 0; i < 16; i++) {	
+		for (var j = 0; j < 12; j++) {	
+			gameBoard += matrix[i][j];
+		}
+		gameBoard += "<br />";
+	}
+	
+	canvas.innerHTML = gameBoard;
+	
+	
+}
+
+function fallBlocks(blocks) {
+
+	var blockX, blockY;
+
+	altitude += 1;
+		
+	for (var i = 0; i < blocks.length; i++) {
+		blocks[i].y += 1;
+		blockX = blocks[i].x+3;
+		blockY = blocks[i].y;
+		matrix[blockY][blockX] = "X";
+	}
+
+}
+
+
+
+function removeBlocks(blocks) {
+
+	var blockX, blockY;
+		
+	for (var i = 0; i < blocks.length; i++) {
+		blockX = blocks[i].x+3;
+		blockY = blocks[i].y;
+		matrix[blockY][blockX] = "-";
+	}
+
+}
+
+function shiftBlocks(blocks) {
+
+	var blockX, blockY;
+		
+	for (var i = 0; i < blocks.length; i++) {
+		blocks[i].y += altitude;
+		blockX = blocks[i].x+3;
+		blockY = blocks[i].y;
+		matrix[blockY][blockX] = "X";
+	}
+
+}
+
+function gameLoop() {
+
+	removeBlocks(blocks);
+	fallBlocks(blocks);
+	drawMatrix(matrix);
+	
+	setTimeout(function() { gameLoop(); }, 0.5 * 1000);
+	
+}
+
+gameLoop();
+
+document.getElementById("rotateLeft").onclick = function(e) {
+	removeBlocks(blocks);
+	blocks = jRight;
+	shiftBlocks(blocks);
+	//fallBlocks(blocks);
+	//drawMatrix(matrix);
+	
+}
+
+</script>
+</body>
+</html>

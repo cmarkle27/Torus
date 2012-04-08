@@ -1,27 +1,66 @@
 /**
- * Blockus
+ * Board
  *
  */
-var Blockus = function() {
+var Board = function(options) {
 
-	this.matrix = [];
+	this.level = 0;
 
-	// new, hmm...
-/*
-	this.matrix2 = [];
-
-
-	for (var i = 0; i < 12; i++) {	
-		this.matrix2[i] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+	// could use a for in, or jQuery extend
+	if (options.hasOwnProperty('level')) {
+		this.level = parseInt(options.level, 10);
 	}
+
+	this.toriods = [];
+
+	//console.log(this);
 	
-	this.toroids = [];
-*/
-	
+	this.loop();
+
 }
 
 // ------------------------------------------------------------------------
 
+Board.prototype.loop = function() {
+
+	var self = this;
+	console.log(self);
+	
+	toroid = new Toriod();
+	
+	
+	setTimeout(function() { self.loop(); }, 1000);
+
+}
+
+
+
+
+// ------------------------------------------------------------------------
+
+Board.prototype.addToroid = function(toroid) {
+
+	this.toroids.push(toroid);
+	
+	console.log(this.toroids);
+	
+	// should add to matrix2 (multidimentional array) instead
+
+/*
+	var numBlocks = blocks.length;
+	
+	for (var i = 0; i < numBlocks; i++) {
+
+		this.matrix.push(blocks[i]);
+	}
+*/
+	
+}
+
+
+
+
+/*
 Blockus.prototype.hitCheck = function(blocks) {
 
 	var numBlocks = blocks.length;
@@ -139,6 +178,7 @@ Blockus.prototype.clearLine = function(number) {
 
 }
 
+*/
 
 
 // can't readjust blocks!!!
@@ -151,18 +191,5 @@ Blockus.prototype.clearLine = function(number) {
  *
  */
 
-Blockus.prototype.addToroid = function(toroid) {
 
-	this.toroids.push(toroid);
-	
-	// should add to matrix2 (multidimentional array) instead
-
-	var numBlocks = blocks.length;
-	
-	for (var i = 0; i < numBlocks; i++) {
-
-		this.matrix.push(blocks[i]);
-	}
-	
-}
 

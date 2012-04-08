@@ -1,4 +1,5 @@
 // events
+/*
 $("body").keydown(function(e) {
 
 	switch (e.keyCode) {
@@ -26,14 +27,16 @@ $("body").keydown(function(e) {
 	}
 	
 });
+*/
 
 $(document).ready(function() {
 	
 	$('#begin').on('click', function() {
+	
+		window.board = new Board({ 'level' : level });
+		// global for debugging only
+		
 		$(this).html('Restart Game');
-		window.toroid = new Toroid();
-		window.blockus = new Blockus();
-		gameLoop();
 
 	});
 	

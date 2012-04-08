@@ -1,0 +1,155 @@
+<!DOCTYPE html> 
+<html> 
+<head>
+<title>Torus 2</title>
+<style type="text/css">
+	body { background: #6b6b6b; margin:0; padding:0; }
+	canvas { background-image: url("img/space_bg.jpg"); border: solid 10px #000; float: left; }
+	#wrapper { margin: 20px; }
+</style>
+</head>
+
+<body>
+<div id="wrapper" class="clearfix">
+	<canvas id="torusScreen" width="480" height="600"></canvas>
+</div>
+
+<script type="text/javascript">
+
+var canvas = document.getElementById("torusScreen");
+var context = canvas.getContext("2d");
+
+var tileWidth = 40;
+var tileHeight = 40;
+var tileImage = new Image();
+
+tileImage.src = 'img/tile4.png';
+
+
+var Toroid = (function() {
+
+	var nextId = 1;
+	
+	// shapes
+	var j = new Array();
+	var i, o, l, s, z, t;
+	
+	j[0] = {
+		"name" : "jNorth",
+		"x" : [2, 1, 1, 1,],
+		"y" : [1, 1, 2, 3]
+	};
+
+	j[1] = {
+		"name" : "jSouth",
+		"x" : [2, 1, 1, 3,],
+		"y" : [1, 1, 2, 1]
+	};
+	
+	
+	function randomShape() {
+		return j;//shapes[Math.floor(Math.random() * shapes.length)];
+	};
+	
+	function randomColor() {
+		var colors = ["#cc0000", "#3399ff", "#ffff33", "#33cc00", "#666666", "#3333ff", "#339900", "#bbbbbb"];
+		return colors[Math.floor(Math.random() * colors.length)];
+	};	
+	
+
+		
+	// constructor
+	var cls = function() {
+	
+		// private
+		var id = nextId++;
+		
+		// public (this instance only)
+		this.getId = function() {
+			return id;
+		};
+
+		// make getters?
+		this.color = randomColor();
+		this.shape = j; //randomShape();
+		this.orientation = 0; // north, etc
+		this.position = 0; // left / right
+		this.altitude = 1;
+		
+		
+		// we will need a method to return blocks???
+		
+		this.set_name = function(value) {
+			if (typeof value != 'string') throw 'Name must be a string';
+			if (value.length < 2 || value.length > 20) throw 'Name must be 2-20 characters long.';
+			name = value;
+		};
+		
+	};
+	
+	
+	// move to board?
+	cls.draw = function(toroid) {
+	
+		var x, y;
+		var color = toroid.color;
+	
+		for (var i = 0; i < 4; i++) {
+
+			//x = toroid.shape.x[i]*tileWidth;
+			//y = toroid.shape.y[i]*tileHeight;
+			
+	     	context.beginPath();
+	        context.rect(80, 80, tileHeight, tileWidth);
+	        context.fillStyle = color;
+	        context.fill();
+			
+		    context.drawImage(tileImage, 80, 80, tileHeight, tileWidth);			
+			
+		}
+	};
+	
+/*
+	cls.clear = function(toroid) {
+		var x, y
+		var color = toroid.color;
+
+		for (var i = 0; i < 4; i++) {
+
+			x = toroid.shape.x[i]*tileWidth;
+			y = toroid.shape.y[i]*tileHeight;
+			
+			context.clearRect(x, y, tileHeight, tileWidth);
+			
+		}
+
+	}
+*/
+	
+	cls.rotate = function(toroid) {
+		this.clear(toroid);
+		toroid.shape = j[1];
+		this.draw(toroid);
+	}
+	
+	//remove & drop blocks for torus
+	//...
+
+	// public static
+	cls.get_nextId = function() {
+		return nextId;
+	};
+	
+	// public (shared across instances)
+	cls.prototype = {
+		announce: function() {
+			alert('Hi there! My id is ' + this.get_id() + ' and my name is "' + this.get_name() + '"!\r\n' + 'The next fellow\'s id will be ' + MyClass.get_nextId() + '!');
+		}
+	};
+	
+	return cls;
+	
+})();
+</script>
+</body>
+</html>
