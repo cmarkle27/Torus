@@ -6,6 +6,7 @@
 	body { background: #6b6b6b; margin:0; padding:0; }
 	canvas { background-image: url("img/space_bg.jpg"); border: solid 10px #000; float: left; }
 	#wrapper { margin: 20px; }
+	.clearfix { overflow: hidden; zoom: 1; }
 </style>
 </head>
 
@@ -29,7 +30,9 @@ var gameLoop = function(toroid) {
 	Toroid.clear(toroid);
 	
 	// make into method
+	// we need to add to a diffrent var which will be later added to altitude
 	toroid.altitude += 1;
+	
 	
 	Toroid.draw(toroid);
 	
@@ -41,23 +44,33 @@ var Toroid = (function() {
 
 	var nextId = 1;
 	
-	// shapes
-	var j = new Array();
-	var i, o, l, s, z, t;
+	var j = [];
+	//var i, o, l, s, z, t;
 	
 	j[0] = {
 		"name" : "jNorth",
-		"x" : [2, 1, 1, 1,],
-		"y" : [1, 1, 2, 3]
+		"x" : [0, 1, 1, 1],
+		"y" : [2, 2, 1, 0]
 	};
 
 	j[1] = {
-		"name" : "jSouth",
-		"x" : [2, 1, 1, 3,],
-		"y" : [1, 1, 2, 1]
+		"name" : "jEast",
+		"x" : [0, 0, 1, 2],
+		"y" : [0, 1, 1, 1]
 	};
-	
-	
+
+	j[2] = {
+		"name" : "jSouth",
+		"x" : [0, 0, 0, 1],
+		"y" : [0, 1, 2, 0]
+	};
+		
+	j[3] = {
+		"name" : "jWest",
+		"x" : [0, 1, 2, 2],
+		"y" : [0, 0, 0, 1]
+	};
+		
 	function randomShape() {
 		return j;//[Math.floor(Math.random() * 2)];
 	};
@@ -139,7 +152,19 @@ var Toroid = (function() {
 		}
 	};
 
-
+	cls.rotate = function(toroid) {
+	
+		toroid.orientation += 1;
+		
+		var shapeLength = toroid.shape.length;
+		
+		if (toroid.orientation > shapeLength) {
+			toroid.orientation = 0;
+		}
+		
+	};
+	
+	
 
 	
 	//remove & drop blocks for torus
