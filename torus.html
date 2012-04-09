@@ -1,7 +1,7 @@
 <!DOCTYPE html> 
 <html> 
 <head>
-<title>Torus 2</title>
+<title>Untitled</title>
 <style type="text/css">
 	body { background: #6b6b6b; margin:0; padding:0; }
 	canvas { background-image: url("img/space_bg.jpg"); border: solid 10px #000; float: left; }
@@ -19,12 +19,23 @@
 var canvas = document.getElementById("torusScreen");
 var context = canvas.getContext("2d");
 
-var tileWidth = 40;
-var tileHeight = 40;
+var tileSize = 40;
 var tileImage = new Image();
 
 tileImage.src = 'img/tile4.png';
 
+var gameLoop = function(toroid) {
+
+	Toroid.clear(toroid);
+	
+	// make into method
+	toroid.altitude += 1;
+	
+	Toroid.draw(toroid);
+	
+	setTimeout(function() { gameLoop(toroid); }, 1000);
+
+}
 
 var Toroid = (function() {
 
@@ -48,7 +59,7 @@ var Toroid = (function() {
 	
 	
 	function randomShape() {
-		return j;//shapes[Math.floor(Math.random() * shapes.length)];
+		return j;//[Math.floor(Math.random() * 2)];
 	};
 	
 	function randomColor() {
@@ -64,18 +75,17 @@ var Toroid = (function() {
 		// private
 		var id = nextId++;
 		
+		// make getters?
+		this.color = randomColor();
+		this.shape = randomShape();
+		this.orientation = 1;
+		this.altitude = 1;
+		
 		// public (this instance only)
 		this.getId = function() {
 			return id;
 		};
 
-		// make getters?
-		this.color = randomColor();
-		this.shape = j; //randomShape();
-		this.orientation = 0; // north, etc
-		this.position = 0; // left / right
-		this.altitude = 1;
-		
 		
 		// we will need a method to return blocks???
 		
@@ -91,46 +101,46 @@ var Toroid = (function() {
 	// move to board?
 	cls.draw = function(toroid) {
 	
-		var x, y;
+		var x = toroid.shape[toroid.orientation]["x"];
+		var y = toroid.shape[toroid.orientation]["y"];
 		var color = toroid.color;
-	
-		for (var i = 0; i < 4; i++) {
-
-			//x = toroid.shape.x[i]*tileWidth;
-			//y = toroid.shape.y[i]*tileHeight;
+		var altitude = toroid.altitude;
+		var xCoord, yCoord;
 			
+		for (var i = 0; i < 4; i++) {
+			
+			xCoord = (x[i]*tileSize);
+			yCoord = (y[i]*tileSize) + (altitude*tileSize);
+									
 	     	context.beginPath();
-	        context.rect(80, 80, tileHeight, tileWidth);
+	        context.rect(xCoord, yCoord, tileSize, tileSize);
 	        context.fillStyle = color;
 	        context.fill();
 			
-		    context.drawImage(tileImage, 80, 80, tileHeight, tileWidth);			
+		    context.drawImage(tileImage, xCoord, yCoord, tileSize, tileSize);			
 			
 		}
 	};
 	
-/*
 	cls.clear = function(toroid) {
-		var x, y
-		var color = toroid.color;
 
-		for (var i = 0; i < 4; i++) {
-
-			x = toroid.shape.x[i]*tileWidth;
-			y = toroid.shape.y[i]*tileHeight;
+		var x = toroid.shape[toroid.orientation]["x"];
+		var y = toroid.shape[toroid.orientation]["y"];
+		var altitude = toroid.altitude;
+		var xCoord, yCoord;
 			
-			context.clearRect(x, y, tileHeight, tileWidth);
+		for (var i = 0; i < 4; i++) {
+			
+			xCoord = (x[i]*tileSize);
+			yCoord = (y[i]*tileSize) + (altitude*tileSize);
+						
+		    context.clearRect(xCoord, yCoord, tileSize, tileSize);		
 			
 		}
+	};
 
-	}
-*/
-	
-	cls.rotate = function(toroid) {
-		this.clear(toroid);
-		toroid.shape = j[1];
-		this.draw(toroid);
-	}
+
+
 	
 	//remove & drop blocks for torus
 	//...
