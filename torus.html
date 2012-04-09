@@ -3,7 +3,7 @@
 <head>
 <title>Untitled</title>
 <style type="text/css">
-	body { background: #6b6b6b; margin:0; padding:0; }
+	body { background: #222222; margin:0; padding:0; }
 	canvas { background-image: url("img/space_bg.jpg"); border: solid 10px #000; float: left; }
 	#wrapper { margin: 20px; }
 	.clearfix { overflow: hidden; zoom: 1; }
@@ -25,54 +25,90 @@ var tileImage = new Image();
 
 tileImage.src = 'img/tile4.png';
 
-var gameLoop = function(toroid) {
 
+var transformation = {
+	altitude: 0,
+	rotation: 0,
+	orientation: 0
+};
+
+var rotate = function(toroid) {
+	
+	var orientation = toroid.orientation + 1;
+	var shapeLength = toroid.shape.length;
+	
+	if (orientation > shapeLength) {
+		orientation = 0;
+	}
+	
+	transformation.orientation = orientation;
+	
+};
+
+
+var gameLoop = function() {
+
+	toroid = new Toroid();
+	
 	Toroid.clear(toroid);
 	
+	// fall
 	// make into method
-	// we need to add to a diffrent var which will be later added to altitude
-	toroid.altitude += 1;
+	transformation.altitude += 1;
+
+
+
+	//Toroid.clear(toroid); ???
 	
 	
-	Toroid.draw(toroid);
+	// apply transformations
+	// we need to add to a diffrent var which will be later added to altitude???
+	newToroid = Toroid.transform(toroid, transformation);
 	
-	setTimeout(function() { gameLoop(toroid); }, 1000);
+	// alt
+	// rot
+	// pos
+	// spd
+	
+	
+	Toroid.draw(newToroid);
+	
+	setTimeout(function() { gameLoop(); }, 1000);
 
 }
+
 
 var Toroid = (function() {
 
 	var nextId = 1;
 	
-	var j = [];
-	//var i, o, l, s, z, t;
+	var shapes = ["j", "l", "o", "i", "s", "z", "t"];
 	
-	j[0] = {
-		"name" : "jNorth",
+	shapes["j"] = [];
+	
+	shapes["j"][0] = {
 		"x" : [0, 1, 1, 1],
 		"y" : [2, 2, 1, 0]
 	};
 
-	j[1] = {
-		"name" : "jEast",
+	shapes["j"][1] = {
 		"x" : [0, 0, 1, 2],
 		"y" : [0, 1, 1, 1]
 	};
 
-	j[2] = {
-		"name" : "jSouth",
+	shapes["j"][2] = {
 		"x" : [0, 0, 0, 1],
 		"y" : [0, 1, 2, 0]
 	};
 		
-	j[3] = {
-		"name" : "jWest",
+	shapes["j"][3] = {
 		"x" : [0, 1, 2, 2],
 		"y" : [0, 0, 0, 1]
 	};
+	
 		
 	function randomShape() {
-		return j;//[Math.floor(Math.random() * 2)];
+		return shapes["j"];//[Math.floor(Math.random() * shapes.length)];
 	};
 	
 	function randomColor() {
@@ -109,6 +145,8 @@ var Toroid = (function() {
 		};
 		
 	};
+	
+	//transform
 	
 	
 	// move to board?
@@ -152,19 +190,16 @@ var Toroid = (function() {
 		}
 	};
 
-	cls.rotate = function(toroid) {
-	
-		toroid.orientation += 1;
+
+	cls.transform = function(toroid, transformation) {
+		toroid.altitude = transformation.altitude;
+		toroid.orientation = transformation.orientation;
+		toroid.rotation = transformation.rotation;
 		
-		var shapeLength = toroid.shape.length;
+		//hmmm
+		return toroid;
 		
-		if (toroid.orientation > shapeLength) {
-			toroid.orientation = 0;
-		}
-		
-	};
-	
-	
+	}
 
 	
 	//remove & drop blocks for torus
