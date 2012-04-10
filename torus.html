@@ -3,7 +3,7 @@
 <head>
 <title>Untitled</title>
 <style type="text/css">
-	body { background: #222222; margin:0; padding:0; }
+	body { background: #222; margin:0; padding:0; }
 	canvas { background-image: url("img/space_bg.jpg"); border: solid 10px #000; float: left; }
 	#wrapper { margin: 20px; }
 	.clearfix { overflow: hidden; zoom: 1; }
@@ -19,96 +19,59 @@
 
 var canvas = document.getElementById("torusScreen");
 var context = canvas.getContext("2d");
-
 var tileSize = 40;
 var tileImage = new Image();
-
 tileImage.src = 'img/tile4.png';
 
+// Toroid should become ToroidViewController?
 
-var transformation = {
-	altitude: 0,
-	rotation: 0,
-	orientation: 0
-};
+// GAMELOOP
+function gameLoop(toroid) {
 
-var rotate = function(toroid) {
-	
-	var orientation = toroid.orientation + 1;
-	var shapeLength = toroid.shape.length;
-	
-	if (orientation > shapeLength) {
-		orientation = 0;
+	if (Toroid.fall(toroid) == false) {
+		//...
+	} else {
+		setTimeout(function() { gameLoop(toroid); }, 1000);
 	}
 	
-	transformation.orientation = orientation;
-	
-};
-
-
-var gameLoop = function() {
-
-	toroid = new Toroid();
-	
-	Toroid.clear(toroid);
-	
-	// fall
-	// make into method
-	transformation.altitude += 1;
-
-
-
-	//Toroid.clear(toroid); ???
-	
-	
-	// apply transformations
-	// we need to add to a diffrent var which will be later added to altitude???
-	newToroid = Toroid.transform(toroid, transformation);
-	
-	// alt
-	// rot
-	// pos
-	// spd
-	
-	
-	Toroid.draw(newToroid);
-	
-	setTimeout(function() { gameLoop(); }, 1000);
+	console.log(toroid.getInfo());
 
 }
 
-
+// TOROID
 var Toroid = (function() {
 
 	var nextId = 1;
 	
-	var shapes = ["j", "l", "o", "i", "s", "z", "t"];
+	var j = [];
+	//var i, o, l, s, z, t;
 	
-	shapes["j"] = [];
-	
-	shapes["j"][0] = {
+	j[0] = {
+		"name" : "jNorth",
 		"x" : [0, 1, 1, 1],
 		"y" : [2, 2, 1, 0]
 	};
 
-	shapes["j"][1] = {
+	j[1] = {
+		"name" : "jEast",
 		"x" : [0, 0, 1, 2],
 		"y" : [0, 1, 1, 1]
 	};
 
-	shapes["j"][2] = {
+	j[2] = {
+		"name" : "jSouth",
 		"x" : [0, 0, 0, 1],
 		"y" : [0, 1, 2, 0]
 	};
 		
-	shapes["j"][3] = {
+	j[3] = {
+		"name" : "jWest",
 		"x" : [0, 1, 2, 2],
 		"y" : [0, 0, 0, 1]
 	};
-	
 		
 	function randomShape() {
-		return shapes["j"];//[Math.floor(Math.random() * shapes.length)];
+		return j;//[Math.floor(Math.random() * 2)];
 	};
 	
 	function randomColor() {
@@ -127,13 +90,17 @@ var Toroid = (function() {
 		// make getters?
 		this.color = randomColor();
 		this.shape = randomShape();
-		this.orientation = 1;
+		this.orientation = 0;
 		this.altitude = 1;
 		
 		// public (this instance only)
 		this.getId = function() {
 			return id;
 		};
+		
+		this.getInfo = function() {
+			return this;
+		}
 
 		
 		// we will need a method to return blocks???
@@ -145,8 +112,6 @@ var Toroid = (function() {
 		};
 		
 	};
-	
-	//transform
 	
 	
 	// move to board?
@@ -191,16 +156,48 @@ var Toroid = (function() {
 	};
 
 
-	cls.transform = function(toroid, transformation) {
-		toroid.altitude = transformation.altitude;
-		toroid.orientation = transformation.orientation;
-		toroid.rotation = transformation.rotation;
+	cls.rotate = function(toroid) {
+	
+	
+		Toroid.clear(toroid);
+	
+		toroid.orientation += 1;
 		
-		//hmmm
-		return toroid;
+		var shapeLength = toroid.shape.length;
 		
-	}
+		if (toroid.orientation >= shapeLength) {
+			toroid.orientation = 0;
+		}
+		
+		console.log(shapeLength);
+		
+		Toroid.draw(toroid);
+		
+		return true;
+		
+	};
 
+
+	cls.fall = function(toroid) {
+	
+		Toroid.clear(toroid);
+		
+		var xBlocks = toroid.shape[toroid.orientation].x;
+		var yBlocks = toroid.shape[toroid.orientation].y;
+		
+		for (var i = 0; i < 4; i++) {
+		
+			// floor
+			if (yBlocks[i] + toroid.altitude === 14) {
+				return false;
+			}
+		}
+		
+		toroid.altitude += 1;
+		
+		Toroid.draw(toroid);
+		
+	};
 	
 	//remove & drop blocks for torus
 	//...
@@ -213,7 +210,7 @@ var Toroid = (function() {
 	// public (shared across instances)
 	cls.prototype = {
 		announce: function() {
-			alert('Hi there! My id is ' + this.get_id() + ' and my name is "' + this.get_name() + '"!\r\n' + 'The next fellow\'s id will be ' + MyClass.get_nextId() + '!');
+			alert('Hi there! My id is ' + this.get_id());
 		}
 	};
 	
