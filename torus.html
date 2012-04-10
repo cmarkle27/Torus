@@ -5,7 +5,10 @@
 <style type="text/css">
 	body { background: #222; margin:0; padding:0; }
 	canvas { background-image: url("img/space_bg.jpg"); border: solid 10px #000; float: left; }
-	#wrapper { margin: 20px; }
+	#wrapper { 
+		margin: 40px auto; 
+		width: 520px;
+	}
 	.clearfix { overflow: hidden; zoom: 1; }
 </style>
 </head>
@@ -28,7 +31,7 @@ tileImage.src = 'img/tile4.png';
 // GAMELOOP
 function gameLoop(toroid) {
 
-	if (Toroid.fall(toroid) == false) {
+	if (Toroid.fall(toroid) === false) {
 		//...
 	} else {
 		setTimeout(function() { gameLoop(toroid); }, 1000);
@@ -37,6 +40,26 @@ function gameLoop(toroid) {
 	console.log(toroid.getInfo());
 
 }
+
+// BOARD
+var board = {};
+board.matrix = []
+board.matrix.push([0,0,0,0,0,0,0,0,0,0,0,0]);
+board.matrix.push([0,0,0,0,0,0,0,0,0,0,0,0]);
+board.matrix.push([0,0,0,0,0,0,0,0,0,0,0,0]);
+board.matrix.push([0,0,0,0,0,0,0,0,0,0,0,0]);
+board.matrix.push([0,0,0,0,0,0,0,0,0,0,0,0]);
+board.matrix.push([0,0,0,0,0,0,0,0,0,0,0,0]);
+board.matrix.push([0,0,0,0,0,0,0,0,0,0,0,0]);
+board.matrix.push([0,0,0,0,0,0,0,0,0,0,0,0]);
+board.matrix.push([0,0,0,0,0,0,0,0,0,0,0,0]);
+board.matrix.push([0,0,0,0,0,0,0,0,0,0,0,0]);
+board.matrix.push([0,0,0,0,0,0,0,0,0,0,0,0]);
+board.matrix.push([0,0,0,0,0,0,0,0,0,0,0,0]);
+board.matrix.push([0,0,0,0,0,0,0,0,0,0,0,0]);
+board.matrix.push([0,0,0,0,0,0,0,0,0,0,0,0]);
+
+console.log(board.matrix[2][0]); // flipped
 
 // TOROID
 var Toroid = (function() {
@@ -91,7 +114,8 @@ var Toroid = (function() {
 		this.color = randomColor();
 		this.shape = randomShape();
 		this.orientation = 0;
-		this.altitude = 1;
+		this.altitude = 0; // ???
+		this.position = 0;
 		
 		// public (this instance only)
 		this.getId = function() {
@@ -185,13 +209,24 @@ var Toroid = (function() {
 		var xBlocks = toroid.shape[toroid.orientation].x;
 		var yBlocks = toroid.shape[toroid.orientation].y;
 		
+		var x, y;
+		
 		for (var i = 0; i < 4; i++) {
 		
-			// floor
-			if (yBlocks[i] + toroid.altitude === 14) {
+			x = xBlocks[i] + toroid.position;
+			y = yBlocks[i] + toroid.altitude;
+
+			if (board.matrix[y] == null || board.matrix[x] == null) {
 				return false;
 			}
+			
+			if (board.matrix[y][x] === 1) {
+				return false;
+			}
+		
 		}
+		
+		// this should be based on board.matrix
 		
 		toroid.altitude += 1;
 		
