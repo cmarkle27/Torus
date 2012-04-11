@@ -32,7 +32,7 @@ tileImage.src = 'img/tile4.png';
 function gameLoop(toroid) {
 
 	if (Toroid.fall(toroid) === false) {
-		//...
+		board.addToroid(toroid);
 	} else {
 		setTimeout(function() { gameLoop(toroid); }, 1000);
 	}
@@ -60,6 +60,37 @@ board.matrix.push([0,0,0,0,0,0,0,0,0,0,0,0]);
 board.matrix.push([0,0,0,0,0,0,0,0,0,0,0,0]);
 
 console.log(board.matrix[2][0]); // flipped
+
+board.addToroid = function(toroid) {
+
+	var x = toroid.shape[toroid.orientation]["x"];
+	var y = toroid.shape[toroid.orientation]["y"];
+	var color = toroid.color;
+	var altitude = toroid.altitude;
+	var xCoord, yCoord;
+	
+	for (var i = 0; i < 4; i++) {
+		
+		xMatrix = x[i];
+		yMatrix = y[i] + altitude -1;
+		
+		board.matrix[yMatrix][xMatrix] = 1;
+								
+		xCoord = (x[i]*tileSize);
+		yCoord = (y[i]*tileSize) + (altitude*tileSize);
+		
+     	context.beginPath();
+        context.rect(xCoord, yCoord, tileSize, tileSize);
+        context.fillStyle = color;
+        context.fill();
+		
+	    context.drawImage(tileImage, xCoord, yCoord, tileSize, tileSize);			
+		
+	}
+	
+
+
+}
 
 // TOROID
 var Toroid = (function() {
