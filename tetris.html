@@ -1,0 +1,97 @@
+<!DOCTYPE html> 
+<html lang="en">
+
+<head>
+	<title>Tetris</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<script src="http://ajax.cdnjs.com/ajax/libs/json2/20110223/json2.js"></script>
+	<script src="http://ajax.cdnjs.com/ajax/libs/underscore.js/1.1.6/underscore-min.js"></script>
+	<script src="http://ajax.cdnjs.com/ajax/libs/backbone.js/0.3.3/backbone-min.js"></script>
+</head>
+	
+<body>
+		
+<div id="canvas"></div>
+
+<script type="text/javascript">
+
+var Tetrimino = Backbone.Model.extend({
+ 
+	defaults : {
+		orientation : 0,
+		altitude : 0,
+		position : 0
+	},
+	
+	initialize : function() {
+		//_.bindAll(this, "randomShape");
+		this.set({"shape" : this.randomShape()});
+		this.set({"color" : this.randomColor()});
+		//this.bind('add', this.addOne);
+	},
+
+	randomShape : function() {
+		var shapes = {
+			j : new Array(
+				{ "x" : [0, 1, 1, 1], "y" : [2, 2, 1, 0] },
+				{ "x" : [0, 0, 1, 2], "y" : [0, 1, 1, 1] },
+				{ "x" : [0, 0, 0, 1], "y" : [0, 1, 2, 0] },
+				{ "x" : [0, 1, 2, 2], "y" : [0, 0, 0, 1] }
+			)
+			// i, o, l, s, z, t;
+		};
+		return shapes.j;//shapes[Math.floor(Math.random() * shapes.length)];
+	},
+	
+	randomColor : function() {
+		var colors = ["#cc0000", "#3399ff", "#ffff33", "#33cc00", "#666666", "#3333ff", "#339900", "#bbbbbb"];
+		return colors[Math.floor(Math.random() * colors.length)];
+	},
+	
+	url : function() {
+		// Important! It's got to know where to send its REST calls.
+		// In this case, POST to '/donuts' and PUT to '/donuts/:id'
+		return this.id ? '/tetriminoes/' + this.id : '/tetriminoes';
+	}
+	
+});
+
+
+var bostonCream = new Tetrimino({ // attributes passed to the Donut constructor will override the defaults
+    name : "Bostan Cream",
+    cream_filled : true
+});
+
+console.log(bostonCream);
+
+
+
+/*
+var Tetriminoes = Backbone.Collection.extend({
+  model : Tetrimino,
+  url : "/tetriminoes"
+});
+*/
+
+
+//var tetriminoes = new Tetriminoes();
+ 
+//tetriminoes.fetch(); 
+// this makes a call to the server and populates the collection based on the response.
+// perhaps for saving to server
+
+/*
+tetriminoes.each(function(tetrimino) {
+	console.log(tetrimino);
+});
+*/
+
+    
+</script>
+
+
+</body>
+	
+</html>
+
+

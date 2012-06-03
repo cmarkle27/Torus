@@ -11,6 +11,9 @@
 	}
 	.clearfix { overflow: hidden; zoom: 1; }
 </style>
+
+<script src="http://ajax.cdnjs.com/ajax/libs/underscore.js/1.1.6/underscore-min.js"></script>
+
 </head>
 
 <body>
@@ -95,46 +98,29 @@ board.addToroid = function(toroid) {
 // TOROID
 var Toroid = (function() {
 
+	// this should be static
 	var nextId = 1;
-	
-	var j = [];
-	//var i, o, l, s, z, t;
-	
-	j[0] = {
-		"name" : "jNorth",
-		"x" : [0, 1, 1, 1],
-		"y" : [2, 2, 1, 0]
-	};
 
-	j[1] = {
-		"name" : "jEast",
-		"x" : [0, 0, 1, 2],
-		"y" : [0, 1, 1, 1]
-	};
-
-	j[2] = {
-		"name" : "jSouth",
-		"x" : [0, 0, 0, 1],
-		"y" : [0, 1, 2, 0]
-	};
-		
-	j[3] = {
-		"name" : "jWest",
-		"x" : [0, 1, 2, 2],
-		"y" : [0, 0, 0, 1]
-	};
-		
+	// this should be static
 	function randomShape() {
-		return j;//[Math.floor(Math.random() * 2)];
+		var shapes = {
+			j : [
+				{ "x" : [0, 1, 1, 1], "y" : [2, 2, 1, 0] },
+				{ "x" : [0, 0, 1, 2], "y" : [0, 1, 1, 1] },
+				{ "x" : [0, 0, 0, 1], "y" : [0, 1, 2, 0] },
+				{ "x" : [0, 1, 2, 2], "y" : [0, 0, 0, 1] }
+			],
+			k : []
+		};
+		return shapes.j;//[Math.floor(Math.random() * 2)];
 	};
 	
+	// this should be static
 	function randomColor() {
 		var colors = ["#cc0000", "#3399ff", "#ffff33", "#33cc00", "#666666", "#3333ff", "#339900", "#bbbbbb"];
 		return colors[Math.floor(Math.random() * colors.length)];
 	};	
 	
-
-		
 	// constructor
 	var cls = function() {
 	
