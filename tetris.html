@@ -7,20 +7,39 @@
 	<script src="http://ajax.cdnjs.com/ajax/libs/json2/20110223/json2.js"></script>
 	<script src="http://ajax.cdnjs.com/ajax/libs/underscore.js/1.1.6/underscore-min.js"></script>
 	<script src="http://ajax.cdnjs.com/ajax/libs/backbone.js/0.3.3/backbone-min.js"></script>
+	<style type="text/css">
+	body { background: #222; margin:0; padding:0; }
+	canvas { background-image: url("img/space_bg.jpg"); border: solid 10px #000; float: left; }
+	#wrapper { 
+		margin: 40px auto; 
+		width: 520px;
+	}
+	.clearfix { overflow: hidden; zoom: 1; }
+	</style>
 </head>
 	
 <body>
 		
-<div id="canvas"></div>
+<div id="wrapper" class="clearfix">
+	<canvas id="torusScreen" width="480" height="600"></canvas>
+</div>
 
 <script type="text/javascript">
+
+// view stuff???
+var canvas = document.getElementById("torusScreen");
+var context = canvas.getContext("2d");
+var tileSize = 40;
+var tileImage = new Image();
+tileImage.src = 'img/tile4.png';
+
 
 var Tetrimino = Backbone.Model.extend({
  
 	defaults : {
-		orientation : 0,
-		altitude : 0,
-		position : 0
+		"orientation" : 0,
+		"altitude" : 0,
+		"position" : 0
 	},
 	
 	initialize : function() {
@@ -30,6 +49,7 @@ var Tetrimino = Backbone.Model.extend({
 		//this.bind('add', this.addOne);
 	},
 
+	// this could be a private method under initialize???
 	randomShape : function() {
 		var shapes = {
 			j : new Array(
@@ -43,10 +63,73 @@ var Tetrimino = Backbone.Model.extend({
 		return shapes.j;//shapes[Math.floor(Math.random() * shapes.length)];
 	},
 	
+	// this could be a private method under initialize???
 	randomColor : function() {
 		var colors = ["#cc0000", "#3399ff", "#ffff33", "#33cc00", "#666666", "#3333ff", "#339900", "#bbbbbb"];
 		return colors[Math.floor(Math.random() * colors.length)];
 	},
+	
+	// should this be a controller or view method???
+	rotate : function(direction) {	
+		var shape = this.get("shape");
+		var orientation = this.get("orientation");
+		
+		if (direction === "left") {
+			orientation++;
+		} else {
+			orientation--;
+		}
+		
+		if (orientation === shape.length) {
+			orientation = 0;
+		} else if (orientation < 0) {
+			orientation = shape.length - 1;
+		}
+		
+		this.set({ "orientation" : orientation });
+	},
+	
+	// should this be a controller or view method???
+	move : function(direction) {	
+		var shape = this.get("shape");
+		var position = this.get("position");
+		
+		if (direction === "left") {
+			position++;
+		} else {
+			position--;
+		}
+		
+		console.log(position*tileSize)
+		
+/*
+		if (position === shape.length) {
+			position = 0;
+		} else if (position < 0) {
+			position = shape.length - 1;
+		}
+*/
+		
+		this.set({ "position" : position });
+	},
+	
+	fall : function() {	
+		var shape = this.get("shape");
+		var altitude = this.get("altitude");
+		
+		altitude++; // or "depth"?
+		
+/*
+		if (position === shape.length) {
+			position = 0;
+		} else if (position < 0) {
+			position = shape.length - 1;
+		}
+*/
+		
+		this.set({ "altitude" : altitude });
+	},
+	
 	
 	url : function() {
 		// Important! It's got to know where to send its REST calls.
@@ -56,14 +139,70 @@ var Tetrimino = Backbone.Model.extend({
 	
 });
 
+// ------------------------------------------------------------------------
 
-var bostonCream = new Tetrimino({ // attributes passed to the Donut constructor will override the defaults
-    name : "Bostan Cream",
-    cream_filled : true
+
+TetriminoView = Backbone.View.extend({
+
+    initialize : function(){
+    	_.bindAll(this, "render");
+        this.render(); // render on init
+        this.model.bind('change', this.render); // render on model change
+    },
+    
+    render : function(){
+    	
+    	context.clearRect(0, 0, 480, 600); 
+    	
+		var shape = this.model.get("shape");
+		var position = this.model.get("position");
+		var orientation = this.model.get("orientation");
+		var altitude = this.model.get("altitude");
+		var color = this.model.get("color");
+		var x = shape[orientation]["x"];
+		var y = shape[orientation]["y"];
+		var xCoord, yCoord;
+				
+		for (var i = 0; i < 4; i++) {
+			
+			xCoord = (x[i]*tileSize) + (position*tileSize);
+			yCoord = (y[i]*tileSize) + (altitude*tileSize);
+			
+	     	context.beginPath();
+	        context.rect(xCoord, yCoord, tileSize, tileSize);
+	        context.fillStyle = color;
+	        context.fill();
+			
+		    context.drawImage(tileImage, xCoord, yCoord, tileSize, tileSize);			
+
+		}        
+    }
+    
+        //events : arrows
+    
 });
 
-console.log(bostonCream);
+// ------------------------------------------------------------------------
 
+
+
+
+var activeTetrimino = new Tetrimino({ speed : 1000 });
+
+
+
+// GAMELOOP
+function gameLoop(tetrimino) {
+
+	tetrimino.fall();
+
+	setTimeout(function() { gameLoop(tetrimino); }, 1000);
+
+
+}
+
+
+//console.log(bostonCream);
 
 
 /*
