@@ -22,7 +22,7 @@
 		
 <div id="wrapper" class="clearfix">
 	<canvas id="torusScreen" width="480" height="600"></canvas>
-<button id="start">Start</button>
+	<button id="start">Start</button>
 </div>
 
 
@@ -32,6 +32,8 @@
 var canvas = document.getElementById("torusScreen");
 var context = canvas.getContext("2d");
 var tileSize = 40;
+var boardWidth = 480;
+var boardHeight = 600;
 var tileImage = new Image();
 tileImage.src = 'img/tile4.png';
 
@@ -40,10 +42,10 @@ var Tetrimino = Backbone.Model.extend({
  
 	defaults : {
 		"orientation" : 0,
-		"altitude" : 0,
+		"depth" : 0,
 		"position" : 0
 	},
-	
+
 	initialize : function() {
 		//_.bindAll(this, "randomShape");
 		this.set({"shape" : this.randomShape()});
@@ -94,44 +96,49 @@ var Tetrimino = Backbone.Model.extend({
 	// should this be a controller or view method???
 	move : function(direction) {	
 		var shape = this.get("shape");
+		var orientation = this.get("orientation");
 		var position = this.get("position");
+		var x = shape[orientation]["x"];
+		var xCoord;
 		
 		if (direction === "left") {
 			position++;
 		} else {
 			position--;
 		}
-		
-		console.log(position*tileSize)
-		
-/*
-		if (position === shape.length) {
-			position = 0;
-		} else if (position < 0) {
-			position = shape.length - 1;
+				
+		for (var i = 0; i < 4; i++) {
+			
+			xCoord = (x[i]*tileSize) + (position*tileSize);
+			
+			if (xCoord == boardWidth || xCoord < 0) {
+				return;
+			}
 		}
-*/
 		
 		this.set({ "position" : position });
 	},
 	
 	fall : function() {	
 		var shape = this.get("shape");
-		var altitude = this.get("altitude");
-		
-		altitude++; // or "depth"?
-		
-/*
-		if (position === shape.length) {
-			position = 0;
-		} else if (position < 0) {
-			position = shape.length - 1;
+		var orientation = this.get("orientation");
+		var depth = this.get("depth");
+		var y = shape[orientation]["y"];
+		var yCoord;
+
+		depth++;
+
+		for (var i = 0; i < 4; i++) {
+			
+			yCoord = (y[i]*tileSize) + (depth*tileSize);
+			
+			if (yCoord == boardHeight) {
+				return;
+			}
 		}
-*/
 		
-		this.set({ "altitude" : altitude });
+		this.set({ "depth" : depth });
 	},
-	
 	
 	url : function() {
 		// Important! It's got to know where to send its REST calls.
@@ -199,7 +206,7 @@ TetriminoView = Backbone.View.extend({
 		var shape = this.model.get("shape");
 		var position = this.model.get("position");
 		var orientation = this.model.get("orientation");
-		var altitude = this.model.get("altitude");
+		var depth = this.model.get("depth");
 		var color = this.model.get("color");
 		var x = shape[orientation]["x"];
 		var y = shape[orientation]["y"];
@@ -208,7 +215,7 @@ TetriminoView = Backbone.View.extend({
 		for (var i = 0; i < 4; i++) {
 			
 			xCoord = (x[i]*tileSize) + (position*tileSize);
-			yCoord = (y[i]*tileSize) + (altitude*tileSize);
+			yCoord = (y[i]*tileSize) + (depth*tileSize);
 			
 	     	context.beginPath();
 	        context.rect(xCoord, yCoord, tileSize, tileSize);
