@@ -6,28 +6,24 @@ var TetrisBoard = (function() {
 	 * @access: private
 	 */ 
 	function hitCheck(boardTetrimino, xCoord, yCoord) {
-
-		var hits = 0;
 		var boardShape = boardTetrimino.shape[boardTetrimino.orientation];
 		var boardBlocks = boardShape.x.length;
 		var boardDepth = boardTetrimino.depth;
 		var boardPosition = boardTetrimino.position;
 		var boardShapeX, boardShapeY;
+		var hits = 0;
 		
 		// check if any of our existing blocks have been hit
 		for (var j = 0; j < boardBlocks; j++) {
-
 			boardShapeX = boardShape.x[j] + boardPosition;
 			boardShapeY = boardShape.y[j] + boardDepth;
 			
 			if (boardShapeY === yCoord && boardShapeX === xCoord) {
 				hits += 1;
 			}			
-			
 		}
 
 		return hits;
-
 	}
 
 	// object instance
@@ -39,8 +35,13 @@ var TetrisBoard = (function() {
 	obj.prototype = {
 
 		addTetrimino : function(oldTetrimino) {
+			var overBoard = 0;
+			var boardShapeX, boardShapeY;
+			var lineCount = [];
+			var redLine;
 			var deadTetrimino = new Tetrimino();
-			// we should make a construct option instead
+			//var stepTetrimonos;
+			// we should make a constructor option instead
 			deadTetrimino.shape = oldTetrimino.shape;
 			deadTetrimino.orientation = oldTetrimino.orientation;
 			deadTetrimino.depth = oldTetrimino.depth;
@@ -48,15 +49,123 @@ var TetrisBoard = (function() {
 			deadTetrimino.color = oldTetrimino.color;
 
 			this.tetriminoes.push(deadTetrimino);
-			delete oldTetrimino;
 
-			_.each(this.tetriminoes, function(boardTetrimino){
+			boardContext.clearRect(0, 0, 480, 600);
+
+			// loop over last peice depths only???
+
+			// check for lines???
+			for (var y = 14; y > 0; y--) {
+
+				lineCount[y] = 0;
+
+				_.each(this.tetriminoes, function(boardTetrimino) {
+
+					boardShapeX = boardTetrimino.shape[boardTetrimino.orientation].x;
+					boardShapeY = boardTetrimino.shape[boardTetrimino.orientation].y;
+
+					for (var i = 0; i < boardShapeY.length; i++) {
+						if (boardShapeY[i]+boardTetrimino.depth === y) {
+							lineCount[y] += 1;
+						}
+					}
+
+				});
+
+				// temp number
+				// remove
+				if (lineCount[y] === 12) {
+
+					_.each(this.tetriminoes, function(boardTetrimino) {
+
+						console.log("id: "+boardTetrimino.id);
+
+						redLine = y - boardTetrimino.depth;
+
+						console.log(redLine);
+
+						//boardShapeX = boardTetrimino.shape[boardTetrimino.orientation].x;
+						boardShapeY = boardTetrimino.shape[boardTetrimino.orientation].y;
+
+						for (var i = 0; i < boardShapeY.length; i++) {
+
+							if (boardTetrimino.shape[boardTetrimino.orientation].y[i] === redLine) {
+								delete boardTetrimino.shape[boardTetrimino.orientation].y[i];
+								delete boardTetrimino.shape[boardTetrimino.orientation].x[i];
+							}
+
+							// if (boardShapeY[i]+boardTetrimino.depth === y) {
+							// 	lineCount += 1;
+							// }
+						}
+
+						boardTetrimino.depth++;
+						boardTetrimino.render(boardContext);
+
+						//stepTetrimonos.push(boardTetrimino);
+
+					});
+				}
+
+				//this.tetriminoes = stepTetrimonos;
+				
+			}
+
+			console.log("----------------");
+
+			//boardContext.clearRect(0, 0, 480, 600);
+
+			_.each(this.tetriminoes, function(boardTetrimino) {
 				boardTetrimino.render(boardContext);
+
+				// check overflow
+				if (boardTetrimino.depth <= 0) {
+					overBoard += 1;
+				}
+				
 			});
+
+			if (overBoard > 0) {
+				return false;
+			} else {
+				return true;
+			}
 		},
 
-		checkDown : function(tetrimino) {
+		checkFall : function(tetrimino) {
+			var shape = tetrimino.shape;
+			var orientation = tetrimino.orientation;
+			var depth = tetrimino.depth;
+			var position = tetrimino.position;
+			var x = shape[orientation]["x"];
+			var y = shape[orientation]["y"];
+			var xCoord, yCoord;
+			var hits = 0;
 
+			for (var i = 0; i < 4; i++) {
+				xCoord = x[i] + position;
+				yCoord = y[i] + depth;
+				
+				// hit floor
+				if (yCoord == (boardHeight/tileSize)) {
+					hits += 1;
+				}
+
+				// hit blocks
+				_.each(this.tetriminoes, function(boardTetrimino) { 
+					hits += hitCheck(boardTetrimino, xCoord, yCoord); 
+				});
+			}
+
+			if (hits > 0) {
+				tetrimino.depth -= 1;
+				return false;
+			}
+				
+			return true;
+		},
+
+		checkMove : function(tetrimino, direction) {
 			var shape = tetrimino.shape;
 			var orientation = tetrimino.orientation;
 			var depth = tetrimino.depth;
@@ -67,29 +176,26 @@ var TetrisBoard = (function() {
 			var xCoord, yCoord;
 
 			for (var i = 0; i < 4; i++) {
-				
 				xCoord = x[i] + position;
 				yCoord = y[i] + depth;
-				
-				// hit floor
-				if (yCoord == (boardHeight/tileSize)) {
+
+				// hit wall
+				if (xCoord == (boardWidth/tileSize) || xCoord < 0) {
 					hits += 1;
 				}
 
-				// hit blocks?
+				// hit blocks
 				_.each(this.tetriminoes, function(boardTetrimino) { 
 					hits += hitCheck(boardTetrimino, xCoord, yCoord); 
 				});
 			}
 
 			if (hits > 0) {
-				tetrimino.depth -= 1;
-				this.addTetrimino(tetrimino);
+				tetrimino.position += (direction === "left") ? 1 : -1;
 				return false;
 			}
-				
-			return true;
 
+			return true;
 		}
 
 	};
@@ -108,16 +214,24 @@ var Tetrimino = (function() {
 	 * @access: private
 	 */ 
 	function randomShape() {
+		var shapeArray = ["j", "o", "i"];
 		var shapes = {
 			j : new Array(
 				{ "x" : [0, 1, 1, 1], "y" : [2, 2, 1, 0] },
 				{ "x" : [0, 0, 1, 2], "y" : [0, 1, 1, 1] },
 				{ "x" : [0, 0, 0, 1], "y" : [0, 1, 2, 0] },
 				{ "x" : [0, 1, 2, 2], "y" : [0, 0, 0, 1] }
+			),
+			o : new Array(
+				{ "x" : [0, 1, 0, 1], "y" : [0, 1, 1, 0] }
+			),
+			i : new Array(
+				{ "x" : [0, 0, 0, 0], "y" : [0, 1, 2, 3] },
+				{ "x" : [0, 1, 2, 3], "y" : [0, 0, 0, 0] }
 			)
-			// i, o, l, s, z, t;
+			// l, s, z, t;
 		};
-		return shapes.j;//shapes[Math.floor(Math.random() * shapes.length)];
+		return shapes[shapeArray[Math.floor(Math.random() * shapeArray.length)]];
 	}
 
 	/**
@@ -129,20 +243,22 @@ var Tetrimino = (function() {
 		return colors[Math.floor(Math.random() * colors.length)];
 	}
 
+	var nextId = 0;
+
 	// object instance
 	var obj = function() {
 		this.orientation = 0;
-		this.depth = 0;
+		this.depth = -3;
 		this.position = 0;
 		this.shape = randomShape();
 		this.color = randomColor();
+		this.id = ++nextId;
 	}
 
 	// object prototype (static)
 	obj.prototype = {
 
 		render : function(context) {
-
 			var position = this.position;
 			var depth = this.depth;
 			var color = this.color;
@@ -150,14 +266,11 @@ var Tetrimino = (function() {
 			var y = this.shape[this.orientation]["y"];
 			var xCoord, yCoord;
 
-			// clear
 			//context.clearRect(0, 0, 480, 600); // maybe per context???
-			// board should be a seperate canvas???
 
 			for (var i = 0; i < 4; i++) {
 				xCoord = (x[i]*tileSize) + (position*tileSize);
 				yCoord = (y[i]*tileSize) + (depth*tileSize);
-
 				context.beginPath();
 				context.rect(xCoord, yCoord, tileSize, tileSize);
 				context.fillStyle = color;
@@ -189,26 +302,11 @@ var Tetrimino = (function() {
 		},
 
 		move : function(direction) {	
-			var position = this.position;
-			var x = this.shape[this.orientation]["x"];
-			var xCoord;
-
 			if (direction === "left") {
-				position -= 1;
+				this.position -= 1;
 			} else {
-				position += 1;
+				this.position += 1;
 			}
-
-			for (var i = 0; i < 4; i++) {
-
-				xCoord = (x[i]*tileSize) + (position*tileSize);
-
-				if (xCoord == boardWidth || xCoord < 0) {
-					return;
-				}
-			}
-
-			this.position = position;
 		}
 
 	};
@@ -219,25 +317,16 @@ var Tetrimino = (function() {
 
 // --------------------------------------------------------------------
 
-function gameLoop(tetrimino, board) {
+function gameLoop() {
 
-	if (board.checkDown(tetrimino) === false) {
-		console.log("ssssstop!!!");
-		dropTetrimino(board);
-	} else {
+	PubSub.publish("fall");
 
-		piecesContext.clearRect(0, 0, 480, 600);
-		tetrimino.render(piecesContext);
+	if (window.loop === false) { return false; }
 
-		// te.fall()
-		tetrimino.fall();
+	var mainTimeout = setTimeout(function() { 
+		gameLoop();
+	}, 300);
 
-		if (window.loop == false) { return false; }
-
-		var mainTimeout = setTimeout(function() { 
-			gameLoop(tetrimino, board);
-		}, 500);		
-	}
 }
 
 // --------------------------------------------------------------------
@@ -249,20 +338,45 @@ var piecesContext = piecesCanvas.getContext("2d");
 var boardCanvas = document.getElementById("board");
 var boardContext = boardCanvas.getContext("2d");
 
-var tileSize = 40;
 var boardWidth = 480;
 var boardHeight = 600;
+
+var tileSize = 40;
 var tileImage = new Image();
 tileImage.src = 'img/tile4.png';
 
+// --------------------------------------------------------------------
+
 function dropTetrimino(currentBoard) {
+	// move to Board
 
 	var activeTetrimino = new Tetrimino();
 
+	var tokenFall = PubSub.subscribe("fall", function(message) { 
+		activeTetrimino.fall();
+		if (currentBoard.checkFall(activeTetrimino) === true) {
+			piecesContext.clearRect(0, 0, 480, 600);
+			activeTetrimino.render(piecesContext);
+		} else {
+			PubSub.unsubscribe(tokenFall);
+			PubSub.unsubscribe(tokenMove);
+			PubSub.unsubscribe(tokenRotate);
+			// NOT WORKING... hmmm....
+			if (currentBoard.addTetrimino(activeTetrimino) === false) {
+				alert("Failure!!!");
+				window.loop = false;
+			} else {
+				dropTetrimino(currentBoard);
+			}
+		}
+	});
+
 	var tokenMove = PubSub.subscribe("move", function(message, direction) { 
 		activeTetrimino.move(direction);
-		piecesContext.clearRect(0, 0, 480, 600);
-		activeTetrimino.render(piecesContext);
+		if (currentBoard.checkMove(activeTetrimino, direction) === true) {
+			piecesContext.clearRect(0, 0, 480, 600);
+			activeTetrimino.render(piecesContext);
+		}
 	});
 
 	var tokenRotate = PubSub.subscribe("rotate", function(message, direction) {
@@ -271,7 +385,6 @@ function dropTetrimino(currentBoard) {
 		activeTetrimino.render(piecesContext);
 	});
 
-	gameLoop(activeTetrimino, currentBoard);
 }
 
 // --------------------------------------------------------------------
@@ -280,11 +393,11 @@ $(document).ready(function() {
 
 	window.loop = true;
 
-
 	
 	$('#start').on('click', function() {
 		var newBoard = new TetrisBoard();
 		dropTetrimino(newBoard);
+		gameLoop();
 	});
 
 	// --------------------------------------------------------------------
@@ -313,6 +426,7 @@ $(document).ready(function() {
 			case 38: 
 			case 87: 
 				toroid.push(.5);
+				// these need keyup too
 			break; // up
 			
 			case 40: 
