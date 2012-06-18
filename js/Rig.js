@@ -13,11 +13,9 @@ var TetrisBoard = (function() {
 		var boardShapeX, boardShapeY;
 		var hits = 0;
 		
-		// check if any of our existing blocks have been hit
 		for (var j = 0; j < boardBlocks; j++) {
 			boardShapeX = boardShape.x[j] + boardPosition;
 			boardShapeY = boardShape.y[j] + boardDepth;
-			
 			if (boardShapeY === yCoord && boardShapeX === xCoord) {
 				hits += 1;
 			}			
@@ -26,110 +24,142 @@ var TetrisBoard = (function() {
 		return hits;
 	}
 
-	// object instance
+	// --------------------------------------------------------------------
+
 	var obj = function() {
 		this.tetriminoes = [];
+		this.depths = new Array(14); // use board const!
+		// this.depths.push();
+		console.log(_.map(this.depths, function(num) { return 0; }));
 	}
 
-	// object prototype (static)
+	// --------------------------------------------------------------------
+
 	obj.prototype = {
 
-		addTetrimino : function(oldTetrimino) {
-			var overBoard = 0;
+		addTetrimino : function(deadTetrimino) {
+
+			var lastDepths;
+			this.tetriminoes.push(deadTetrimino);
+
+			// we need to add to our depths array;
+			lastDepths = deadTetrimino.shape[deadTetrimino.orientation].y;
+			//lastDepths = _.uniq(lastDepths);
+
+			// push to depths
+			//...
+
+			var x = _.map(lastDepths, function(num) { 
+
+				this.depths[num + deadTetrimino.depth];
+
+
+				return num + deadTetrimino.depth; 
+			});
+
+			//console.log(x);
+
+
+
+
+
+
+			// publish event????
+
+
+
+
 			var boardShapeX, boardShapeY;
 			var lineCount = [];
 			var redLine;
-			var deadTetrimino = new Tetrimino();
-			//var stepTetrimonos;
-			// we should make a constructor option instead
-			deadTetrimino.shape = oldTetrimino.shape;
-			deadTetrimino.orientation = oldTetrimino.orientation;
-			deadTetrimino.depth = oldTetrimino.depth;
-			deadTetrimino.position = oldTetrimino.position;
-			deadTetrimino.color = oldTetrimino.color;
 
-			this.tetriminoes.push(deadTetrimino);
 
-			boardContext.clearRect(0, 0, 480, 600);
+
+			
+
+			//boardContext.clearRect(0, 0, 480, 600);
 
 			// loop over last peice depths only???
 
 			// check for lines???
-			for (var y = 14; y > 0; y--) {
+			// for (var y = 14; y > 0; y--) {
 
-				lineCount[y] = 0;
+			// 	lineCount[y] = 0;
 
-				_.each(this.tetriminoes, function(boardTetrimino) {
+			// 	_.each(this.tetriminoes, function(boardTetrimino) {
 
-					boardShapeX = boardTetrimino.shape[boardTetrimino.orientation].x;
-					boardShapeY = boardTetrimino.shape[boardTetrimino.orientation].y;
+			// 		boardShapeX = boardTetrimino.shape[boardTetrimino.orientation].x;
+			// 		boardShapeY = boardTetrimino.shape[boardTetrimino.orientation].y;
 
-					for (var i = 0; i < boardShapeY.length; i++) {
-						if (boardShapeY[i]+boardTetrimino.depth === y) {
-							lineCount[y] += 1;
-						}
-					}
+			// 		for (var i = 0; i < boardShapeY.length; i++) {
+			// 			if (boardShapeY[i]+boardTetrimino.depth === y) {
+			// 				lineCount[y] += 1;
+			// 			}
+			// 		}
 
-				});
+			// 	});
 
-				// temp number
-				// remove
-				if (lineCount[y] === 12) {
+			// 	// temp number
+			// 	// remove
+			// 	if (lineCount[y] === 12) {
 
-					_.each(this.tetriminoes, function(boardTetrimino) {
+			// 		_.each(this.tetriminoes, function(boardTetrimino) {
 
-						console.log("id: "+boardTetrimino.id);
+			// 			console.log("id: "+boardTetrimino.id);
 
-						redLine = y - boardTetrimino.depth;
+			// 			redLine = y - boardTetrimino.depth;
 
-						console.log(redLine);
+			// 			console.log(redLine);
 
-						//boardShapeX = boardTetrimino.shape[boardTetrimino.orientation].x;
-						boardShapeY = boardTetrimino.shape[boardTetrimino.orientation].y;
+			// 			//boardShapeX = boardTetrimino.shape[boardTetrimino.orientation].x;
+			// 			boardShapeY = boardTetrimino.shape[boardTetrimino.orientation].y;
 
-						for (var i = 0; i < boardShapeY.length; i++) {
+			// 			for (var i = 0; i < boardShapeY.length; i++) {
 
-							if (boardTetrimino.shape[boardTetrimino.orientation].y[i] === redLine) {
-								delete boardTetrimino.shape[boardTetrimino.orientation].y[i];
-								delete boardTetrimino.shape[boardTetrimino.orientation].x[i];
-							}
+			// 				if (boardTetrimino.shape[boardTetrimino.orientation].y[i] === redLine) {
+			// 					delete boardTetrimino.shape[boardTetrimino.orientation].y[i];
+			// 					delete boardTetrimino.shape[boardTetrimino.orientation].x[i];
+			// 				}
 
-							// if (boardShapeY[i]+boardTetrimino.depth === y) {
-							// 	lineCount += 1;
-							// }
-						}
+			// 				// if (boardShapeY[i]+boardTetrimino.depth === y) {
+			// 				// 	lineCount += 1;
+			// 				// }
+			// 			}
 
-						boardTetrimino.depth++;
-						boardTetrimino.render(boardContext);
+			// 			boardTetrimino.depth++;
+			// 			boardTetrimino.render(boardContext);
 
-						//stepTetrimonos.push(boardTetrimino);
+			// 			//stepTetrimonos.push(boardTetrimino);
 
-					});
-				}
+			// 		});
+			// 	}
 
-				//this.tetriminoes = stepTetrimonos;
+			// 	//this.tetriminoes = stepTetrimonos;
 				
-			}
+			// }
 
 			console.log("----------------");
 
-			//boardContext.clearRect(0, 0, 480, 600);
+			this.render();
 
+
+		},
+
+		render : function() {
+			boardContext.clearRect(0, 0, 480, 600);
 			_.each(this.tetriminoes, function(boardTetrimino) {
 				boardTetrimino.render(boardContext);
+			});
+		},
 
-				// check overflow
-				if (boardTetrimino.depth <= 0) {
+		checkHeight : function() {
+			var overBoard = 0;
+			_.each(this.tetriminoes, function(boardTetrimino) {
+				if (boardTetrimino.depth < 0) {
 					overBoard += 1;
 				}
-				
 			});
-
-			if (overBoard > 0) {
-				return false;
-			} else {
-				return true;
-			}
+			return (overBoard === 0);
 		},
 
 		checkFall : function(tetrimino) {
@@ -205,9 +235,11 @@ var TetrisBoard = (function() {
 })();
 
 // --------------------------------------------------------------------
+// --------------------------------------------------------------------
+// --------------------------------------------------------------------
 
 // Tetrimino
-var Tetrimino = (function() {
+var Tetrimino = (function(options) {
 
 	/**
 	 * randomShape()
@@ -216,20 +248,23 @@ var Tetrimino = (function() {
 	function randomShape() {
 		var shapeArray = ["j", "o", "i"];
 		var shapes = {
-			j : new Array(
+			j : [
 				{ "x" : [0, 1, 1, 1], "y" : [2, 2, 1, 0] },
 				{ "x" : [0, 0, 1, 2], "y" : [0, 1, 1, 1] },
 				{ "x" : [0, 0, 0, 1], "y" : [0, 1, 2, 0] },
 				{ "x" : [0, 1, 2, 2], "y" : [0, 0, 0, 1] }
-			),
-			o : new Array(
+			],
+			o : [
 				{ "x" : [0, 1, 0, 1], "y" : [0, 1, 1, 0] }
-			),
-			i : new Array(
+			],
+			i : [
 				{ "x" : [0, 0, 0, 0], "y" : [0, 1, 2, 3] },
 				{ "x" : [0, 1, 2, 3], "y" : [0, 0, 0, 0] }
-			)
-			// l, s, z, t;
+			],
+			l : [],
+			s : [],
+			z : [],
+			t : [] 
 		};
 		return shapes[shapeArray[Math.floor(Math.random() * shapeArray.length)]];
 	}
@@ -284,21 +319,16 @@ var Tetrimino = (function() {
 		},
 
 		rotate : function(direction) {
-			var orientation = this.orientation;
-
 			if (direction === "left") {
-				orientation++;
+				this.orientation++;
 			} else {
-				orientation--;
+				this.orientation--;
 			}
-
-			if (orientation === this.shape.length) {
-				orientation = 0;
-			} else if (orientation < 0) {
-				orientation = this.shape.length - 1;
+			if (this.orientation === this.shape.length) {
+				this.orientation = 0;
+			} else if (this.orientation < 0) {
+				this.orientation = this.shape.length - 1;
 			}
-
-			this.orientation = orientation;
 		},
 
 		move : function(direction) {	
@@ -348,7 +378,7 @@ tileImage.src = 'img/tile4.png';
 // --------------------------------------------------------------------
 
 function dropTetrimino(currentBoard) {
-	// move to Board
+	// move to Board???
 
 	var activeTetrimino = new Tetrimino();
 
@@ -361,8 +391,12 @@ function dropTetrimino(currentBoard) {
 			PubSub.unsubscribe(tokenFall);
 			PubSub.unsubscribe(tokenMove);
 			PubSub.unsubscribe(tokenRotate);
-			// NOT WORKING... hmmm....
-			if (currentBoard.addTetrimino(activeTetrimino) === false) {
+
+			// add tetri
+			currentBoard.addTetrimino(activeTetrimino);
+
+			// check height
+			if (currentBoard.checkHeight() === false) {
 				alert("Failure!!!");
 				window.loop = false;
 			} else {
