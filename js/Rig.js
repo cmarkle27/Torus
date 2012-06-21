@@ -1,10 +1,6 @@
 
 var TetrisBoard = (function() {
 
-	/**
-	 * hitCheck()
-	 * @access: private
-	 */ 
 	function hitCheck(boardTetrimino, xCoord, yCoord) {
 		var boardShape = boardTetrimino.shape[boardTetrimino.orientation];
 		var boardBlocks = boardShape.x.length;
@@ -28,9 +24,7 @@ var TetrisBoard = (function() {
 
 	var obj = function() {
 		this.tetriminoes = [];
-		this.depths = new Array(14); // use board const!
-		// this.depths.push();
-		console.log(_.map(this.depths, function(num) { return 0; }));
+		this.depths = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];//new Array(14); // use board const!
 	}
 
 	// --------------------------------------------------------------------
@@ -39,43 +33,33 @@ var TetrisBoard = (function() {
 
 		addTetrimino : function(deadTetrimino) {
 
-			var lastDepths;
+			var self = this;
+			var tetriminoDepth = deadTetrimino.depth;
+			var tetriminoYCoords = deadTetrimino.shape[deadTetrimino.orientation].y;
+
 			this.tetriminoes.push(deadTetrimino);
 
-			// we need to add to our depths array;
-			lastDepths = deadTetrimino.shape[deadTetrimino.orientation].y;
-			//lastDepths = _.uniq(lastDepths);
-
-			// push to depths
-			//...
-
-			var x = _.map(lastDepths, function(num) { 
-
-				this.depths[num + deadTetrimino.depth];
-
-
-				return num + deadTetrimino.depth; 
+			_.map(tetriminoYCoords, function(num) {
+				self.depths[num+tetriminoDepth-1] += 1;
 			});
 
-			//console.log(x);
+		},
 
+		render : function() {
+			boardContext.clearRect(0, 0, 480, 600);
+			_.each(this.tetriminoes, function(boardTetrimino) {
+				boardTetrimino.render(boardContext, false);
+			});
+		},
 
+		checkLines : function() {
 
+			console.log(this.depths);	
 
+			// var boardShapeX, boardShapeY;
+			// var lineCount = [];
+			// var redLine;
 
-
-			// publish event????
-
-
-
-
-			var boardShapeX, boardShapeY;
-			var lineCount = [];
-			var redLine;
-
-
-
-			
 
 			//boardContext.clearRect(0, 0, 480, 600);
 
@@ -137,19 +121,6 @@ var TetrisBoard = (function() {
 			// 	//this.tetriminoes = stepTetrimonos;
 				
 			// }
-
-			console.log("----------------");
-
-			this.render();
-
-
-		},
-
-		render : function() {
-			boardContext.clearRect(0, 0, 480, 600);
-			_.each(this.tetriminoes, function(boardTetrimino) {
-				boardTetrimino.render(boardContext);
-			});
 		},
 
 		checkHeight : function() {
@@ -241,10 +212,6 @@ var TetrisBoard = (function() {
 // Tetrimino
 var Tetrimino = (function(options) {
 
-	/**
-	 * randomShape()
-	 * @access: private
-	 */ 
 	function randomShape() {
 		var shapeArray = ["j", "o", "i"];
 		var shapes = {
@@ -269,10 +236,6 @@ var Tetrimino = (function(options) {
 		return shapes[shapeArray[Math.floor(Math.random() * shapeArray.length)]];
 	}
 
-	/**
-	 * randomColor()
-	 * @access: private
-	 */ 
 	function randomColor() {
 		var colors = ["#cc0000", "#3399ff", "#ffff33", "#33cc00", "#666666", "#3333ff", "#339900", "#bbbbbb"];
 		return colors[Math.floor(Math.random() * colors.length)];
@@ -293,7 +256,7 @@ var Tetrimino = (function(options) {
 	// object prototype (static)
 	obj.prototype = {
 
-		render : function(context) {
+		render : function(context, clear) {
 			var position = this.position;
 			var depth = this.depth;
 			var color = this.color;
@@ -301,7 +264,9 @@ var Tetrimino = (function(options) {
 			var y = this.shape[this.orientation]["y"];
 			var xCoord, yCoord;
 
-			//context.clearRect(0, 0, 480, 600); // maybe per context???
+			if (clear !== false) {
+				context.clearRect(0, 0, 480, 600);
+			}
 
 			for (var i = 0; i < 4; i++) {
 				xCoord = (x[i]*tileSize) + (position*tileSize);
@@ -385,15 +350,16 @@ function dropTetrimino(currentBoard) {
 	var tokenFall = PubSub.subscribe("fall", function(message) { 
 		activeTetrimino.fall();
 		if (currentBoard.checkFall(activeTetrimino) === true) {
-			piecesContext.clearRect(0, 0, 480, 600);
 			activeTetrimino.render(piecesContext);
 		} else {
+
 			PubSub.unsubscribe(tokenFall);
 			PubSub.unsubscribe(tokenMove);
 			PubSub.unsubscribe(tokenRotate);
 
 			// add tetri
 			currentBoard.addTetrimino(activeTetrimino);
+			currentBoard.render();
 
 			// check height
 			if (currentBoard.checkHeight() === false) {
@@ -402,20 +368,24 @@ function dropTetrimino(currentBoard) {
 			} else {
 				dropTetrimino(currentBoard);
 			}
+
+			// check lines
+			//...
+			currentBoard.checkLines();
+			
 		}
 	});
 
 	var tokenMove = PubSub.subscribe("move", function(message, direction) { 
 		activeTetrimino.move(direction);
 		if (currentBoard.checkMove(activeTetrimino, direction) === true) {
-			piecesContext.clearRect(0, 0, 480, 600);
 			activeTetrimino.render(piecesContext);
 		}
 	});
 
 	var tokenRotate = PubSub.subscribe("rotate", function(message, direction) {
 		activeTetrimino.rotate(direction);
-		piecesContext.clearRect(0, 0, 480, 600);
+		// check it!!!
 		activeTetrimino.render(piecesContext);
 	});
 
@@ -426,7 +396,6 @@ function dropTetrimino(currentBoard) {
 $(document).ready(function() {
 
 	window.loop = true;
-
 	
 	$('#start').on('click', function() {
 		var newBoard = new TetrisBoard();
