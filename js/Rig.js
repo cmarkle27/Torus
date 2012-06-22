@@ -9,6 +9,12 @@ var TetrisBoard = (function() {
 		var boardShapeX, boardShapeY;
 		var hits = 0;
 		
+
+		_.each(this.blocks, function(block) {
+			//new hit check
+		}
+
+
 		for (var j = 0; j < boardBlocks; j++) {
 			boardShapeX = boardShape.x[j] + boardPosition;
 			boardShapeY = boardShape.y[j] + boardDepth;
@@ -24,7 +30,7 @@ var TetrisBoard = (function() {
 
 	var obj = function() {
 		this.tetriminoes = [];
-		this.depths = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];//new Array(14); // use board const!
+		this.blocks = [];// = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];//new Array(14); // use matrix???
 	}
 
 	// --------------------------------------------------------------------
@@ -33,22 +39,58 @@ var TetrisBoard = (function() {
 
 		addTetrimino : function(deadTetrimino) {
 
-			var self = this;
-			var tetriminoDepth = deadTetrimino.depth;
-			var tetriminoYCoords = deadTetrimino.shape[deadTetrimino.orientation].y;
+			var tetriminoBlocks = deadTetrimino.shape[deadTetrimino.orientation];
 
-			this.tetriminoes.push(deadTetrimino);
+			// break em apart!!!
+			for (var i = 3; i >= 0; i--) {
 
-			_.map(tetriminoYCoords, function(num) {
-				self.depths[num+tetriminoDepth-1] += 1;
-			});
+				this.blocks.push({
+					x: tetriminoBlocks.x[i]+deadTetrimino.position,
+					y: tetriminoBlocks.y[i]+deadTetrimino.depth,
+					color: deadTetrimino.color
+				});
+				// console.log(tetriminoBlocks.x[i]+deadTetrimino.position, 'by', tetriminoBlocks.y[i]+deadTetrimino.depth);
+			}
+
+			console.log(this.blocks);
+
+			
+
+
+
+
+			// _.each(deadTetrimino, function(boardTetrimino) {
+			// 	boardTetrimino.render(boardContext, false);
+			// });
+
+
+			// var self = this;
+			// var tetriminoDepth = deadTetrimino.depth;
+			// var tetriminoYCoords = deadTetrimino.shape[deadTetrimino.orientation].y;
+
+			// this.tetriminoes.push(deadTetrimino);
+
+			// _.map(tetriminoYCoords, function(num) {
+			// 	self.depths[num+tetriminoDepth-1] += 1;
+			// });
 
 		},
 
 		render : function() {
 			boardContext.clearRect(0, 0, 480, 600);
-			_.each(this.tetriminoes, function(boardTetrimino) {
-				boardTetrimino.render(boardContext, false);
+			_.each(this.blocks, function(block) {
+
+			
+				xCoord = (block.x*tileSize);
+				yCoord = (block.y*tileSize);
+				boardContext.beginPath();
+				boardContext.rect(xCoord, yCoord, tileSize, tileSize);
+				boardContext.fillStyle = block.color;
+				boardContext.fill();
+				boardContext.drawImage(tileImage, xCoord, yCoord, tileSize, tileSize);
+			
+							//boardTetrimino.render(boardContext, false);
+
 			});
 		},
 
@@ -59,7 +101,7 @@ var TetrisBoard = (function() {
 
 			_.each(this.depths, function(total) {
 
-				console.log(total);
+				//console.log(total);
 
 
 				if (total === 12) {
