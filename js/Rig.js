@@ -54,7 +54,51 @@ var TetrisBoard = (function() {
 
 		checkLines : function() {
 
-			console.log(this.depths);	
+			//console.log(this.depths);
+			var self = this;
+
+			_.each(this.depths, function(total) {
+
+				console.log(total);
+
+
+				if (total === 12) {
+
+					//window.loop = false;
+
+					console.log("line");
+
+					_.each(self.tetriminoes, function(boardTetrimino) {
+
+						console.log("id: "+boardTetrimino.id);
+						console.log(boardTetrimino.depth);
+
+						//boardShapeX = boardTetrimino.shape[boardTetrimino.orientation].x;
+						boardShapeY = boardTetrimino.shape[boardTetrimino.orientation].y;
+
+						for (var i = 0; i < boardShapeY.length; i++) {
+
+							if (boardTetrimino.shape[boardTetrimino.orientation].y[i] === total) {
+								delete boardTetrimino.shape[boardTetrimino.orientation].y[i];
+								delete boardTetrimino.shape[boardTetrimino.orientation].x[i];
+							}
+
+							// if (boardShapeY[i]+boardTetrimino.depth === y) {
+							// 	lineCount += 1;
+							// }
+						}
+
+						//boardTetrimino.depth++;
+						boardTetrimino.render(boardContext);
+
+						//stepTetrimonos.push(boardTetrimino);
+
+					});
+
+				}
+
+			});
+
 
 			// var boardShapeX, boardShapeY;
 			// var lineCount = [];
