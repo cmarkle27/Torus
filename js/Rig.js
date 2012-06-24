@@ -1,35 +1,20 @@
 
 var TetrisBoard = (function() {
 
-	function hitCheck(boardTetrimino, xCoord, yCoord) {
-		var boardShape = boardTetrimino.shape[boardTetrimino.orientation];
-		var boardBlocks = boardShape.x.length;
-		var boardDepth = boardTetrimino.depth;
-		var boardPosition = boardTetrimino.position;
-		var boardShapeX, boardShapeY;
+	function hitCheck(blocks, xCoord, yCoord) {
 		var hits = 0;
-		
-
-		_.each(this.blocks, function(block) {
-			//new hit check
-		}
-
-
-		for (var j = 0; j < boardBlocks; j++) {
-			boardShapeX = boardShape.x[j] + boardPosition;
-			boardShapeY = boardShape.y[j] + boardDepth;
-			if (boardShapeY === yCoord && boardShapeX === xCoord) {
+		_.each(blocks, function(block) {
+			if (block.y == yCoord && block.x == xCoord) {
 				hits += 1;
-			}			
-		}
-
+			}
+		});
 		return hits;
 	}
 
 	// --------------------------------------------------------------------
 
 	var obj = function() {
-		this.tetriminoes = [];
+		this.tetriminoes = []; //???
 		this.blocks = [];// = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];//new Array(14); // use matrix???
 	}
 
@@ -37,22 +22,66 @@ var TetrisBoard = (function() {
 
 	obj.prototype = {
 
-		addTetrimino : function(deadTetrimino) {
+		addTetrimino : function(tetrimino) {
 
-			var tetriminoBlocks = deadTetrimino.shape[deadTetrimino.orientation];
+			var j;
+			var line;
+			var removals = [];
+			var tetriminoBlocks = tetrimino.shape[tetrimino.orientation];
+			var blocks = this.blocks;
+			var adjustment = 0;
 
-			// break em apart!!!
+			// break em apart, and add em
 			for (var i = 3; i >= 0; i--) {
-
 				this.blocks.push({
-					x: tetriminoBlocks.x[i]+deadTetrimino.position,
-					y: tetriminoBlocks.y[i]+deadTetrimino.depth,
-					color: deadTetrimino.color
+					x: tetriminoBlocks.x[i]+tetrimino.position,
+					y: tetriminoBlocks.y[i]+tetrimino.depth,
+					color: tetrimino.color
 				});
-				// console.log(tetriminoBlocks.x[i]+deadTetrimino.position, 'by', tetriminoBlocks.y[i]+deadTetrimino.depth);
 			}
 
-			console.log(this.blocks);
+			// get line counts, and track em
+			for (j = 14; j >= 0; j--) {
+				line = 0;
+				_.each(blocks, function(block) {
+					if (block.y == j) {
+						line += 1;
+					}
+					if (line == 12) {
+						removals.push(j);
+					}
+				});
+			}
+			removals = _.uniq(removals);
+
+			// get rid of em, and adjust em
+			_.each(removals, function(removal) {
+				removal += adjustment;
+				_.each(blocks, function(block, key) {
+					if (block.y == removal) {
+						delete blocks[key];
+					}
+					if (block.y < removal) {
+						block.y += 1;
+					}
+				});
+				adjustment += 1;
+			});
+
+			// // adjust em
+			// _.each(removals, function(removal) {
+			// 	_.each(blocks, function(block) {
+			// 		if (block.y < removal) {
+			// 			block.y += 1;
+			// 		}
+			// 	});		
+			// });
+
+			removals = [];
+
+			//console.log(removals);
+
+			//console.log(this.blocks);
 
 			
 
@@ -209,10 +238,11 @@ var TetrisBoard = (function() {
 			// }
 		},
 
+		// this could be to be part of addLines???
 		checkHeight : function() {
 			var overBoard = 0;
-			_.each(this.tetriminoes, function(boardTetrimino) {
-				if (boardTetrimino.depth < 0) {
+			_.each(this.tetriminoes, function(tetrimino) {
+				if (tetrimino.depth < 0) {
 					overBoard += 1;
 				}
 			});
@@ -239,9 +269,8 @@ var TetrisBoard = (function() {
 				}
 
 				// hit blocks
-				_.each(this.tetriminoes, function(boardTetrimino) { 
-					hits += hitCheck(boardTetrimino, xCoord, yCoord); 
-				});
+				hits += hitCheck(this.blocks, xCoord, yCoord);
+
 			}
 
 			if (hits > 0) {
@@ -272,9 +301,7 @@ var TetrisBoard = (function() {
 				}
 
 				// hit blocks
-				_.each(this.tetriminoes, function(boardTetrimino) { 
-					hits += hitCheck(boardTetrimino, xCoord, yCoord); 
-				});
+				hits += hitCheck(this.blocks, xCoord, yCoord);
 			}
 
 			if (hits > 0) {
@@ -457,7 +484,7 @@ function dropTetrimino(currentBoard) {
 
 			// check lines
 			//...
-			currentBoard.checkLines();
+			//currentBoard.checkLines();
 			
 		}
 	});
@@ -525,7 +552,7 @@ $(document).ready(function() {
 */
 			
 			default: 
-				console.log(e.keyCode);
+				//console.log(e.keyCode);
 			break;
 		}
 	});
