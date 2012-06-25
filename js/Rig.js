@@ -22,7 +22,6 @@ var TetrisBoard = (function() {
 	obj.prototype = {
 
 		addTetrimino : function(tetrimino) {
-
 			var i, j;
 			var line;
 			var removals = [];
@@ -151,6 +150,39 @@ var TetrisBoard = (function() {
 
 			if (hits > 0) {
 				tetrimino.position += (direction === "left") ? 1 : -1;
+				return false;
+			}
+
+			return true;
+		},
+
+		checkRotate : function(tetrimino, direction) {
+			var i;
+			var shape = tetrimino.shape;
+			var orientation = tetrimino.orientation;
+			var depth = tetrimino.depth;
+			var position = tetrimino.position;
+			var x = shape[orientation]["x"];
+			var y = shape[orientation]["y"];
+			var xCoord, yCoord;
+			var hits = 0;
+
+			for (i = 0; i < 4; i++) {
+				xCoord = x[i] + position;
+				yCoord = y[i] + depth;
+
+				// hit wall
+				if (xCoord == (boardWidth/tileSize) || xCoord < 0) {
+					hits += 1;
+				}
+
+				// hit blocks
+				hits += hitCheck(this.blocks, xCoord, yCoord);
+			}
+
+			if (hits > 0) {
+				direction = (direction === "left") ? "right" : "left";
+				tetrimino.rotate(direction);
 				return false;
 			}
 
@@ -293,7 +325,7 @@ function gameLoop() {
 
 	var mainTimeout = setTimeout(function() { 
 		gameLoop();
-	}, 300);
+	}, speed + speedAdjustment);
 
 }
 
@@ -312,6 +344,9 @@ var boardHeight = 600;
 var tileSize = 40;
 var tileImage = new Image();
 tileImage.src = 'img/tile4.png';
+
+var speed = 800;
+var speedAdjustment = 0;
 
 // --------------------------------------------------------------------
 
@@ -358,8 +393,9 @@ function dropTetrimino(currentBoard) {
 
 	var tokenRotate = PubSub.subscribe("rotate", function(message, direction) {
 		activeTetrimino.rotate(direction);
-		// check it!!!
-		activeTetrimino.render(piecesContext);
+		if (currentBoard.checkRotate(activeTetrimino, direction) === true) {
+			activeTetrimino.render(piecesContext);
+		}
 	});
 
 }
@@ -403,8 +439,6 @@ $(document).ready(function() {
 		$('#pause').show();
 	});
 
-	// --------------------------------------------------------------------
-
 	$(document).on('keydown', function(e) {
 		switch (e.keyCode) {
 			case 39: 
@@ -424,25 +458,31 @@ $(document).ready(function() {
 			case 188: 
 				PubSub.publish("rotate", "left");
 			break;
-				
-/*
+
 			case 38: 
 			case 87: 
-				toroid.push(.5);
-				// these need keyup too
+				speedAdjustment = 300;
 			break; // up
 			
 			case 40: 
 			case 83: 
-				toroid.push(-.5);
+				speedAdjustment = speed * -1 + 100;
 			break; // down
-*/
-			
-			default: 
-				//console.log(e.keyCode);
-			break;
 		}
 	});
 	
-});
+	$(document).on('keyup', function(e) {
+		switch (e.keyCode) {
+			case 38: 
+			case 87: 
+				speedAdjustment = 0;
+			break; // up
+			
+			case 40: 
+			case 83: 
+				speedAdjustment = 0;
+			break; // down
+		}
+	});
 
+});
