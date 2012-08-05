@@ -1,20 +1,23 @@
 
 // globals
 var piecesContext = document.getElementById("pieces").getContext("2d");
+var tileSize = 40;
+var tileImage = new Image();
+tileImage.src = 'img/tile_40.png';
 
 
 var Tetrimino = function(ctx) {
 	this.context = ctx;
 	this.orientation = 0;
-	this.depth = -3;
+	this.depth = 4; // -3;
 	this.position = 5;
 	this.shape = this.randomShape();
 	this.color = this.getColor(this.shape);
 };
 
 Tetrimino.prototype.randomShape = function() {
-	var shapeArray = ["j", "o", "i", "l", "s", "z", "t"];
-	var shape = shapeArray[Math.floor(Math.random() * shapeArray.length)];
+	var shapeArray = ["j", "o", "i", "l", "s", "z", "t"],
+		shape = shapeArray[Math.floor(Math.random() * shapeArray.length)];
 	return shape;
 };
 
@@ -72,11 +75,40 @@ Tetrimino.prototype.getColor = function(shape) {
 	return colors[shape];
 };
 
+Tetrimino.prototype.render = function() {
+	var position = this.position;
+	var depth = this.depth;
+	var color = this.color;
+	var shape = this.getShape(this.shape);
+
+	var x = shape[this.orientation]["x"];
+	var y = shape[this.orientation]["y"];
+	var xCoord, yCoord;
+	var ctx = this.context;
+
+
+	ctx.clearRect(0, 0, 480, 600);
+
+	for (var i = 0; i < 4; i++) {
+		xCoord = (x[i]*tileSize) + (position*tileSize);
+		yCoord = (y[i]*tileSize) + (depth*tileSize);
+		ctx.beginPath();
+		ctx.rect(xCoord, yCoord, tileSize, tileSize);
+		ctx.fillStyle = color;
+		ctx.fill();
+		ctx.drawImage(tileImage, xCoord, yCoord, tileSize, tileSize);
+	}
+
+	// return true or false???
+
+};
+
 //------------------
 
 var tetrimino = new Tetrimino(piecesContext);
 //var shape = tetrimino.getShape(tetrimino.shape);
-console.log(tetrimino.shape, " - ", tetrimino.color);
+//console.log(tetrimino.shape, " - ", tetrimino.color);
+
 
 
 
