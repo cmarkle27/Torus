@@ -1,10 +1,10 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="en">
 <head>
 	<title>TetrisJS</title>
 	<link rel="stylesheet" type="text/css" href="css/main.css">
 </head>
-	
+
 <body>
 <div class="wrapper">
 
@@ -12,7 +12,7 @@
 		<canvas id="board" width="480" height="600" style="position: absolute; left: 0; top: 0; z-index: 0;"></canvas>
 		<canvas id="pieces" width="480" height="600" style="position: absolute; left: 0; top: 0; z-index: 1;"></canvas>
 	</div>
-	
+
 	<div class="controls">
 		<a id="start" class="gameButton">Start Game</a>
 		<a id="restart" class="gameButton hidden">New Game</a>
@@ -34,14 +34,14 @@
 
 <script src="js/jquery-1.7.min.js"></script>
 <script src="js/underscore-min.js"></script>
-<script src="js/pubsub.js"></script>	
+<script src="js/pubsub.js"></script>
 <script>
 
 var boardWidth = 480; //
 var boardHeight = 600; //
 var tileSize = 40;
 var tileImage = new Image();
-tileImage.src = 'img/tile4.png';
+tileImage.src = 'img/tile_40.png';
 
 var piecesCanvas = document.getElementById("pieces");
 var piecesContext = piecesCanvas.getContext("2d");
@@ -54,7 +54,7 @@ var Game = function() {
 
 	var board = new TetrisBoard(boardContext);
 
-	
+
 	this.speed = 800;
 	this.velocity = 0;
 
@@ -452,7 +452,7 @@ $(document).ready(function() {
 		var game = new Game();
 		e.preventDefault();
 
-		debugger;
+		//debugger;
 
 		$(this).hide();
 		$('#restart').show();
@@ -528,5 +528,7 @@ $(document).ready(function() {
 });
 
 </script>
+<img src="img/tile4.png">
+
 </body>
 </html>
