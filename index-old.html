@@ -1,0 +1,96 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>Torus 0.2.3</title>
+<link href="css/bootstrap.min.css" rel="stylesheet">
+<style type="text/css">
+	body { background: #1b1b1b; margin:0; padding:0; }
+	canvas { background-image: url("img/space_bg.jpg"); border: solid 1px #000; float: left; }
+	#wrapper { margin: 20px; }
+	#controls { padding: 20px 0; text-align: center; }
+	#header pre { font-family: Monaco, monospace; margin: 0 20px; color: #444; }
+	#header { float: left; width: 600px; }
+
+	/* For modern browsers */
+	.clearfix:before,
+	.clearfix:after {
+	    content:"";
+	    display:table;
+	}
+	
+	.clearfix:after {
+	    clear:both;
+	}
+	
+	/* For IE 6/7 (trigger hasLayout) */
+	.clearfix {
+	    zoom:1;
+	}
+	
+</style>
+
+<script src="js/Board.js"></script>
+<script src="js/Toroid.js"></script>
+<script src="js/jquery-1.7.min.js"></script>
+<script src="js/bootstrap-modal.js"></script>
+<script src="js/events.js"></script>
+</head>
+
+<body>
+
+<div id="wrapper" class="clearfix">
+
+	<div id="header">
+	<pre>
+	*********************************************************                                               
+	*********************************************************                                               
+
+	88888888888                                     .d8888b.  
+	    888                                        d88P  Y88b 
+	    888                                               888 
+	    888   .d88b.  888d888 888  888 .d8888b          .d88P 
+	    888  d88""88b 888P"   888  888 88K          .od888P"  
+	    888  888  888 888     888  888 "Y8888b.    d88P"      
+	    888  Y88..88P 888     Y88b 888      X88    888"       
+	    888   "Y88P"  888      "Y88888  88888P'    888888888  
+
+
+	*********************************************************                                               
+	*********************************************************                                               
+	</pre>                                            
+
+	<div id="controls">
+		<button id="begin" class="btn large primary">Begin Game</button>
+	</div>
+
+	</div>
+	
+	<canvas id="torusScreen" width="480" height="600"></canvas>
+	
+
+</div>
+
+<div id="modal-from-dom" class="modal hide fade">
+<div class="modal-header">
+  <a href="#" class="close">&times;</a>
+  <h3>Modal Heading</h3>
+</div>
+<div class="modal-body">
+  <p>&nbsp;</p>
+</div>
+<div class="modal-footer">
+  <a href="#" id="close" class="btn primary">OK</a>
+</div>
+</div>
+
+<script type="text/javascript">
+
+// global vars
+var canvas = document.getElementById("torusScreen");
+var context = canvas.getContext("2d");
+var level = 0;
+
+</script>
+
+</body>
+</html>
