@@ -9,8 +9,7 @@ var Tetrimino = function(ctx) {
 	this.depth = -3;
 	this.position = 5;
 	this.shape = this.randomShape();
-	//this.newShape = this.randomShape();
-	//this.color = this.getColor(this.shape);
+	this.color = this.getColor(this.shape);
 };
 
 Tetrimino.prototype.randomShape = function() {
@@ -60,18 +59,24 @@ Tetrimino.prototype.getShape = function(shape) {
 
 Tetrimino.prototype.getColor = function(shape) {
 
-	console.log(shape);
-	// should get color based on shape
+	var colors = {
+		j: "#cc0000",
+		o: "#3399ff",
+		i: "#ffff33",
+		l: "#33cc00",
+		s: "#666666",
+		z: "#3333ff",
+		t: "#339900"
+	};
 
-	var colors = ["#cc0000", "#3399ff", "#ffff33", "#33cc00", "#666666", "#3333ff", "#339900", "#bbbbbb"];
-	return colors[Math.floor(Math.random() * colors.length)];
+	return colors[shape];
 };
 
 //------------------
 
 var tetrimino = new Tetrimino(piecesContext);
-var shape = tetrimino.getShape(tetrimino.shape);
-console.log(tetrimino.shape, shape);
+//var shape = tetrimino.getShape(tetrimino.shape);
+console.log(tetrimino.shape, " - ", tetrimino.color);
 
 
 
