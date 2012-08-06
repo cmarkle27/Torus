@@ -1,13 +1,21 @@
 (function() {
 
-	var GameBoard = function() {
-		this.pieceContext = document.getElementById("piece").getContext("2d"); //??? pass the contexts as params to iife
-		this.boardContext = document.getElementById("board").getContext("2d"); //???
+	var pieceContext = document.getElementById("piece").getContext("2d"),
+		boardContext = document.getElementById("board").getContext("2d"),
+		tileImage = new Image(),
+		GameBoard, // require gb (pass ctx's)
+		Tetrimino, // require tm (pass new image)
+		gameBoard; // = new(). init()
+
+	// --------------------------------------------------------------------
+	// GameBoard
+	// --------------------------------------------------------------------
+
+	GameBoard = function() {
 		this.boardWidth = 480;
 		this.boardHeight = 600;
 		this.tileSize = 40;
-		this.tileImage = new Image();
-		this.tileImage.src = 'img/tile_40.png';
+		this.speed = 700;
 	};
 
 	GameBoard.prototype.init = function() {
@@ -22,6 +30,7 @@
 	};
 
 	GameBoard.prototype.createPiece = function() {
+		// we really need to create two pieces, so that we can show the user whats on deck
 		this.currentPiece = new Tetrimino();
 		this.currentPiece.render();
 	};
@@ -64,7 +73,8 @@
 			// add the current piece to the board array!!!
 			//...
 			// delete it
-			this.currentPiece = "";
+			//this.currentPiece = "";
+			this.createPiece();
 		}
 
 	};
@@ -122,23 +132,27 @@
 		setTimeout(function() {
 			console.log("tick");
 			that.loop();
-		}, 500);
+		}, that.speed);
 
 	};
 
 	GameBoard.prototype.clearContexts = function() {
-		this.pieceContext.clearRect(0, 0, this.boardWidth, this.boardHeight);
-		this.boardContext.clearRect(0, 0, this.boardWidth, this.boardHeight);
+		pieceContext.clearRect(0, 0, this.boardWidth, this.boardHeight);// global
+		boardContext.clearRect(0, 0, this.boardWidth, this.boardHeight);// global
 	};
 
-	// -------------
+	// --------------------------------------------------------------------
+	// Tetrimino
+	// --------------------------------------------------------------------
 
-	var Tetrimino = function() {
+	Tetrimino = function() {
 		this.orientation = 0;
 		this.depth = -4;
 		this.position = 5;
 		this.shape = this.randomShape();
 		this.color = this.getColor(this.shape);
+		this.tileImage = tileImage; // global
+		tileImage.src = "img/tile_40.png";
 	};
 
 	Tetrimino.prototype = new GameBoard();
@@ -211,28 +225,25 @@
 			xCoord,
 			yCoord;
 
-		that.pieceContext.clearRect(0, 0, that.boardWidth, that.boardHeight);
+		// global
+		pieceContext.clearRect(0, 0, that.boardWidth, that.boardHeight);
 
 		for (var i = 0; i < 4; i++) {
 			xCoord = (x[i]*that.tileSize) + (that.position*that.tileSize);
 			yCoord = (y[i]*that.tileSize) + (that.depth*that.tileSize);
-			that.pieceContext.beginPath();
-			that.pieceContext.rect(xCoord, yCoord, that.tileSize, that.tileSize);
-			that.pieceContext.fillStyle = that.color;
-			that.pieceContext.fill();
-			that.pieceContext.drawImage(that.tileImage, xCoord, yCoord, that.tileSize, that.tileSize);
+			// global
+			pieceContext.beginPath();
+			pieceContext.rect(xCoord, yCoord, that.tileSize, that.tileSize);
+			pieceContext.fillStyle = that.color;
+			pieceContext.fill();
+			pieceContext.drawImage(that.tileImage, xCoord, yCoord, that.tileSize, that.tileSize);
 		}
 
 	};
 
-
-
-	//------------------
-
-	var gameBoard = new GameBoard();
-	gameBoard.init();
-
-	//-------------------
+	// --------------------------------------------------------------------
+	// Events
+	// --------------------------------------------------------------------
 
 	$(document).on('keydown', function(e) {
 		switch (e.keyCode) {
@@ -258,7 +269,7 @@
 		}
 	});
 
-	//-------------------
+	////////////////////////////////////////////////////////////////////////
 
 	$("#start").on('click', function(e) {
 
@@ -290,10 +301,18 @@
 
 	});
 
-	//-------------------
+	////////////////////////////////////////////////////////////////////////
 
 	$("#options").on('click', function(e) {
 		//...
 	});
+
+
+	// --------------------------------------------------------------------
+	// on ready
+	gameBoard = new GameBoard();
+	gameBoard.init();
+
+	// --------------------------------------------------------------------
 
 })();
