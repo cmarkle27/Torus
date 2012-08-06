@@ -1,20 +1,113 @@
 
-// globals
-var boardWidth = 480;
-var piecesContext = document.getElementById("pieces").getContext("2d");
-var tileSize = 40;
-var tileImage = new Image();
-tileImage.src = 'img/tile_40.png';
+var GameBoard = function() {
+	this.pieceContext = document.getElementById("piece").getContext("2d");
+	this.boardContext = document.getElementById("board").getContext("2d");
+	this.boardWidth = 480;
+	this.boardHeight = 600;
+	this.currentPiece = null;
+	this.tileSize = 40;
+	this.tileImage = new Image();
+	this.tileImage.src = 'img/tile_40.png';
+	this.pieceContext.clearRect(0, 0, this.boardWidth, this.boardHeight);
+	this.boardContext.clearRect(0, 0, this.boardWidth, this.boardHeight);
+};
 
+GameBoard.prototype.createPiece = function() {
+	this.currentPiece = new Tetrimino();
+	this.currentPiece.render();
+};
 
-var Tetrimino = function(ctx) {
-	this.context = ctx;
+GameBoard.prototype.movePiece = function(direction) {
+
+	var piecePosition = this.currentPiece.position,
+		pieceDepth = this.currentPiece.depth;
+
+	if (direction === "left") {
+		piecePosition -= 1;
+	} else if (direction === "right") {
+		piecePosition += 1;
+	} else if (direction === "down") {
+		pieceDepth += 1;
+	}
+	// do "clockwise", and "counterclockwise" here too???
+
+	// we need to do a wall check, a hit check, and a floor check
+	if ( this.checkMove(piecePosition, pieceDepth) ) {
+		this.currentPiece.position = piecePosition;
+		this.currentPiece.depth = pieceDepth;
+		this.currentPiece.render();
+	} else if (direction === "down") {
+		// we need to add the current piece to the board array
+		// ...
+		// and create a new one
+		this.createPiece();
+		console.log("the eagle has landed!");
+	}
+
+};
+
+GameBoard.prototype.checkMove = function(position, depth) {
+	var piece = this.currentPiece,
+		shape = piece.getShape(piece.shape),
+		x = shape[piece.orientation]["x"],
+		y = shape[piece.orientation]["y"],
+		hits = 0,
+		xCoord,
+		yCoord;
+
+	for (i = 0; i < 4; i++) {
+		xCoord = x[i] + position;
+		yCoord = y[i] + depth;
+
+		// hit wall
+		if (xCoord === (this.boardWidth/this.tileSize) || xCoord < 0) {
+			hits += 1;
+		}
+
+		// hit floor
+		if (yCoord === (this.boardHeight/this.tileSize)) {
+			hits += 1;
+		}
+
+		// hit blocks
+		//hits += this.hitCheck(xCoord, yCoord);
+	}
+
+	if (hits > 0) {
+		return false;
+	}
+
+	return true;
+};
+
+GameBoard.prototype.loop = function() {
+
+	var that = this;
+
+	// if this.running == true
+	console.log("weee!!!");
+
+	that.movePiece("down");
+
+	var mainTimeout = setTimeout(function() {
+		that.loop();
+	}, 1000);
+
+};
+
+// -------------
+
+var Tetrimino = function() {
+	// should we create pc here???
 	this.orientation = 0;
 	this.depth = 4; // -3;
 	this.position = 5;
 	this.shape = this.randomShape();
 	this.color = this.getColor(this.shape);
 };
+
+Tetrimino.prototype = new GameBoard();
+Tetrimino.prototype.constructor = Tetrimino;
 
 Tetrimino.prototype.randomShape = function() {
 	var shapeArray = ["j", "o", "i", "l", "s", "z", "t"],
@@ -76,7 +169,6 @@ Tetrimino.prototype.getColor = function(shape) {
 	return colors[shape];
 };
 
-// could this use eachBlock???
 Tetrimino.prototype.render = function() {
 	var that = this,
 		shape = that.getShape(that.shape),
@@ -85,16 +177,16 @@ Tetrimino.prototype.render = function() {
 		xCoord,
 		yCoord;
 
-	that.context.clearRect(0, 0, 480, 600);
+	that.pieceContext.clearRect(0, 0, that.boardWidth, that.boardHeight);
 
 	for (var i = 0; i < 4; i++) {
-		xCoord = (x[i]*tileSize) + (that.position*tileSize);
-		yCoord = (y[i]*tileSize) + (that.depth*tileSize);
-		that.context.beginPath();
-		that.context.rect(xCoord, yCoord, tileSize, tileSize);
-		that.context.fillStyle = that.color;
-		that.context.fill();
-		that.context.drawImage(tileImage, xCoord, yCoord, tileSize, tileSize);
+		xCoord = (x[i]*that.tileSize) + (that.position*that.tileSize);
+		yCoord = (y[i]*that.tileSize) + (that.depth*that.tileSize);
+		that.pieceContext.beginPath();
+		that.pieceContext.rect(xCoord, yCoord, that.tileSize, that.tileSize);
+		that.pieceContext.fillStyle = that.color;
+		that.pieceContext.fill();
+		that.pieceContext.drawImage(that.tileImage, xCoord, yCoord, that.tileSize, that.tileSize);
 	}
 
 	// return true or false???
@@ -103,84 +195,7 @@ Tetrimino.prototype.render = function() {
 
 //------------------
 
-var GameBoard = function(ctx) {
-	this.context = ctx;
-	this.currentPiece = null;
-};
 
-GameBoard.prototype.createPiece = function() {
-	this.currentPiece = new Tetrimino(piecesContext); // pc is global
-	this.currentPiece.render(); //???
-};
-
-GameBoard.prototype.movePiece = function(direction) {
-
-	var piecePosition = this.currentPiece.position,
-		pieceDepth = this.currentPiece.depth;
-
-	// we need to do a wall check, and a hit check, floor check
-	if (direction === "left") {
-		piecePosition -= 1;
-	} else if (direction === "right") {
-		piecePosition += 1;
-	} else if (direction === "fall") {
-		pieceDepth += 1;
-	}
-
-	if ( this.checkMove(piecePosition, pieceDepth) ) {
-		this.currentPiece.position = piecePosition;
-		this.currentPiece.depth = pieceDepth;
-		this.currentPiece.render();
-	}
-
-};
-
-/*GameBoard.prototype.eachBlock = function(callback) {
-	var that = this,
-		shape = that.getShape(that.shape),
-		x = shape[that.orientation]["x"],
-		y = shape[that.orientation]["y"],
-		xCoord,
-		yCoord;
-
-	for (var i = 0; i < 4; i++) {
-		callback();
-	}
-
-};*/
-
-
-// should this be a local function???
-GameBoard.prototype.checkMove = function(position, depth) {
-	var piece = this.currentPiece,
-		shape = piece.getShape(piece.shape),
-		x = shape[piece.orientation]["x"],
-		y = shape[piece.orientation]["y"],
-		hits = 0,
-		xCoord,
-		yCoord;
-
-	for (i = 0; i < 4; i++) {
-		xCoord = x[i] + position;
-		yCoord = y[i] + depth;
-
-
-		// hit wall
-		if (xCoord === (boardWidth/tileSize) || xCoord < 0) {
-			hits += 1;
-		}
-
-		console.log(xCoord, boardWidth/tileSize, hits);
-		// hit blocks
-		//hits += this.hitCheck(xCoord, yCoord);
-	}
-
-	if (hits > 0) {
-		return false;
-	}
-
-	return true;
-};
 
 
 
@@ -193,7 +208,9 @@ GameBoard.prototype.checkMove = function(position, depth) {
 var gameBoard = new GameBoard(); // pass board ctx???
 
 gameBoard.createPiece();
+gameBoard.loop();
 
+// we need a loop!!!
 
 //-------------------
 
