@@ -16,6 +16,7 @@
 		this.boardHeight = 600;
 		this.tileSize = 40;
 		this.speed = 700;
+		// this.blocks = []; //???
 	};
 
 	GameBoard.prototype.init = function() {
@@ -69,9 +70,8 @@
 			this.currentPiece.orientation = pieceOrientation;
 			this.currentPiece.render();
 		} else if (direction === "down") {
-			console.log("the eagle has landed!");
 			// add the current piece to the board array!!!
-			//...
+			this.addPiece(this.currentPiece);
 			// delete it
 			//this.currentPiece = "";
 			this.createPiece();
@@ -113,6 +113,16 @@
 		}
 
 		return true;
+	};
+
+	GameBoard.prototype.addPiece = function(piece) {
+		console.log("the eagle has landed!");
+		console.log(piece);
+/*		this.blocks.push({
+			x: tetriminoBlocks.x[i]+tetrimino.position,
+			y: tetriminoBlocks.y[i]+tetrimino.depth,
+			color: tetrimino.color
+		});*/
 	};
 
 	GameBoard.prototype.loop = function() {
